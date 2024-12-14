@@ -1,17 +1,19 @@
-import { notFound } from 'next/navigation'
-import { getCountryByCode } from '@/lib/api'
-import { CountryDetails } from '@/components/country-details'
+import { notFound } from "next/navigation";
+import { getCountryByCode } from "@/lib/api";
+import { CountryDetails } from "@/components/country-details";
 
 interface CountryPageProps {
-  params: { code: string }
+  params: Promise<{ code: string }>;
 }
 
 export default async function CountryPage({ params }: CountryPageProps) {
-  const country = await getCountryByCode(params.code)
+  const { code } = await params;
+
+  const country = await getCountryByCode(code);
 
   if (!country) {
-    notFound()
+    notFound();
   }
 
-  return <CountryDetails country={country} />
+  return <CountryDetails country={country} />;
 }
