@@ -9,8 +9,8 @@ interface CountryDetailsProps {
 
 export function CountryDetails({ country }: CountryDetailsProps) {
   return (
-    <div className="space-y-8">
-      <div className="flex items-center space-x-4">
+    <article className="space-y-8">
+      <header className="flex items-center space-x-4">
         <Image
           src={country.flags.svg}
           alt={`${country.name.common} flag`}
@@ -19,50 +19,69 @@ export function CountryDetails({ country }: CountryDetailsProps) {
           className="rounded-md"
         />
         <h1 className="text-4xl font-bold">{country.name.common}</h1>
-      </div>
+      </header>
       <CitySearch countryCode={country.cca2} />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
             <CardTitle>General Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Capital: {country.capital?.[0] || "N/A"}</p>
-            <p>Region: {country.region}</p>
-            <p>Subregion: {country.subregion}</p>
-            <p>Population: {country.population.toLocaleString()}</p>
-            <p>Area: {country.area.toLocaleString()} km²</p>
+            <dl className="space-y-2">
+              <div>
+                <dt className="font-semibold">Capital:</dt>
+                <dd>{country.capital?.[0] || "N/A"}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Region:</dt>
+                <dd>{country.region}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Subregion:</dt>
+                <dd>{country.subregion}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Population:</dt>
+                <dd>{country.population.toLocaleString()}</dd>
+              </div>
+              <div>
+                <dt className="font-semibold">Area:</dt>
+                <dd>{country.area.toLocaleString()} km²</dd>
+              </div>
+            </dl>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Languages</CardTitle>
+            <CardTitle className="text-xl">Languages</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul>
+            <div className="space-y-1">
               {Object.values(country.languages || {}).map((language) => (
-                <li key={language}>{language}</li>
+                <div key={language} className="text-sm">
+                  {language}
+                </div>
               ))}
-            </ul>
+            </div>
           </CardContent>
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Currencies</CardTitle>
+            <CardTitle className="text-xl">Currencies</CardTitle>
           </CardHeader>
           <CardContent>
-            <ul>
+            <div className="space-y-1">
               {Object.values(country.currencies || {}).map(
                 (currency: { name: string; symbol: string }) => (
-                  <li key={currency.name}>
+                  <div key={currency.name} className="text-sm">
                     {currency.name} ({currency.symbol})
-                  </li>
+                  </div>
                 )
               )}
-            </ul>
+            </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </section>
+    </article>
   );
 }

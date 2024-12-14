@@ -50,15 +50,21 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
             <p>
               <strong>Country:</strong> {cityDetails.address.country}
             </p>
-            <p>
-              <strong>State:</strong> {cityDetails.address.state}
-            </p>
-            <p>
-              <strong>County:</strong> {cityDetails.address.county}
-            </p>
-            <p>
-              <strong>Postcode:</strong> {cityDetails.address.postcode}
-            </p>
+            {cityDetails.address.state && (
+              <p>
+                <strong>State:</strong> {cityDetails.address.state}
+              </p>
+            )}
+            {cityDetails.address.county && (
+              <p>
+                <strong>County:</strong> {cityDetails.address.county}
+              </p>
+            )}
+            {cityDetails.address.postcode && (
+              <p>
+                <strong>Postcode:</strong> {cityDetails.address.postcode}
+              </p>
+            )}
           </CardContent>
         </Card>
         <Card>
