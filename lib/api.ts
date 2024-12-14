@@ -4,7 +4,10 @@ export async function getCountries() {
   try {
     const response = await fetch(
       "https://restcountries.com/v3.1/all?fields=name,cca3,flags,capital,region,population,translations",
-      { cache: "force-cache" }
+      {
+        cache: "force-cache",
+        next: { revalidate: 3600 },
+      }
     );
     if (!response.ok)
       throw new Error(`Failed to fetch countries. Status: ${response.status}`);
