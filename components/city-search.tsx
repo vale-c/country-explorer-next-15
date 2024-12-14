@@ -1,17 +1,17 @@
 "use client"
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { searchCities } from '@/lib/api'
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { searchCities } from "@/lib/api"
 
 interface CitySearchProps {
   countryCode: string
 }
 
 export function CitySearch({ countryCode }: CitySearchProps) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState("")
   const router = useRouter()
 
   const handleSearch = async (e: React.FormEvent) => {
@@ -31,8 +31,7 @@ export function CitySearch({ countryCode }: CitySearchProps) {
         onChange={(e) => setQuery(e.target.value)}
         className="flex-grow"
       />
-      <Button type="submit">Search</Button>
+      <Button type="submit">Search City</Button>
     </form>
   )
 }
-

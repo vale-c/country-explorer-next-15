@@ -1,23 +1,37 @@
-import { searchCities } from '@/lib/api'
+// app/search/page.tsx
+import { searchCities, searchCountries } from '@/lib/api'
 import { CityList } from '@/components/city-list'
+import { CountryList } from '@/components/country-list'
 
 interface SearchPageProps {
-  searchParams: { q: string; country: string }
+  searchParams: { q: string; country?: string; type: string }
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q, country } = searchParams
-  const cities = await searchCities(`${q}, ${country}`)
+  const { q, country, type } = searchParams
+
+  let results = []
+  let isCitySearch = false
+
+  if (type === 'city') {
+    isCitySearch = true
+    results = await searchCities(`${q}, ${country}`)
+  } else if (type === 'country') {
+    results = await searchCountries(q)
+  }
 
   return (
     <div className="space-y-8">
       <h1 className="text-4xl font-bold">Search Results</h1>
-      {cities.length > 0 ? (
-        <CityList cities={cities} />
+      {results.length > 0 ? (
+        isCitySearch ? (
+          <CityList cities={results} />
+        ) : (
+          <CountryList countries={results} />
+        )
       ) : (
-        <p className="text-center text-red-500">No cities found. Please try a different search.</p>
+        <p className="text-center text-red-500">No results found. Please try a different search.</p>
       )}
     </div>
   )
 }
-

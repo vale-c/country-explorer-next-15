@@ -40,6 +40,19 @@ export async function searchCities(query: string) {
   }
 }
 
+export async function searchCountries(query: string) {
+  try {
+    const response = await fetch(
+      `https://restcountries.com/v3.1/name/${encodeURIComponent(query)}`
+    )
+    if (!response.ok) throw new Error('Failed to search countries')
+    return await response.json()
+  } catch (error) {
+    console.error('Error searching countries:', error)
+    return []
+  }
+}
+
 export async function getCityDetails(lat: number, lon: number) {
   try {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)

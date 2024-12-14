@@ -1,10 +1,10 @@
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
-import { Country } from "@/types/country";
+import Link from 'next/link'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import Image from 'next/image'
+import { Country } from '@/types/country'
 
 interface CountryListProps {
-  countries: Country[];
+  countries: Country[]
 }
 
 export function CountryList({ countries }: CountryListProps) {
@@ -20,19 +20,19 @@ export function CountryList({ countries }: CountryListProps) {
                   alt={`${country.name.common} flag`}
                   width={32}
                   height={24}
-                  className="w-8 h-6 mr-2 mb-3"
+                  className="w-8 h-6 mr-2"
                 />
                 {country.name.common}
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p>Capital: {country.capital?.[0] || "N/A"}</p>
-              <p>Region: {country.region || "N/A"}</p>
-              <p>Population: {country.population.toLocaleString() || "N/A"}</p>
+              <p><strong>Capital:</strong> {country.capital?.[0] || 'N/A'}</p>
+              <p><strong>Region:</strong> {country.region || 'N/A'}</p>
+              <p><strong>Population:</strong> {country.population.toLocaleString() || 'N/A'}</p>
             </CardContent>
           </Card>
         </Link>
       ))}
     </div>
-  );
+  )
 }

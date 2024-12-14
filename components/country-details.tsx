@@ -51,7 +51,7 @@ export function CountryDetails({ country }: CountryDetailsProps) {
           </CardHeader>
           <CardContent>
             <ul>
-              {Object.values(country.currencies || {}).map((currency: any) => (
+              {Object.values(country.currencies || {}).map((currency: { name: string; symbol: string }) => (
                 <li key={currency.name}>
                   {currency.name} ({currency.symbol})
                 </li>
