@@ -1,25 +1,27 @@
-import { notFound } from 'next/navigation'
-import { getCityDetails } from '@/lib/api'
-import { CityDetails } from '@/components/city-details'
+import { notFound } from "next/navigation";
+import { getCityDetails } from "@/lib/api";
+import { CityDetails } from "@/components/city-details";
 
 interface CityPageProps {
-  params: { lat: string; lon: string }
+  params: Promise<{ lat: string; lon: string }>;
 }
 
 export default async function CityPage({ params }: CityPageProps) {
-  const lat = parseFloat(params.lat)
-  const lon = parseFloat(params.lon)
+  const { lat, lon } = await params;
 
-  if (isNaN(lat) || isNaN(lon)) {
-    console.error("Invalid coordinates:", params.lat, params.lon)
-    notFound()
+  const parsedLat = parseFloat(lat);
+  const parsedLon = parseFloat(lon);
+
+  if (isNaN(parsedLat) || isNaN(parsedLon)) {
+    console.error("Invalid coordinates:", lat, lon);
+    notFound();
   }
 
-  const cityDetails = await getCityDetails(lat, lon)
+  const cityDetails = await getCityDetails(parsedLat, parsedLon);
 
   if (!cityDetails) {
-    notFound()
+    notFound();
   }
 
-  return <CityDetails cityDetails={cityDetails} />
+  return <CityDetails cityDetails={cityDetails} />;
 }
