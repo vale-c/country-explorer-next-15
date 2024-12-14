@@ -3,11 +3,11 @@ import { CityList } from "@/components/city-list";
 import { CountryList } from "@/components/country-list";
 
 interface SearchPageProps {
-  searchParams: { q: string; country?: string; type: string };
+  searchParams: Promise<{ q: string; country?: string; type: string }>;
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-  const { q, country, type } = searchParams;
+  const { q, country, type } = await searchParams;
 
   let results = [];
   let isCitySearch = false;
