@@ -20,7 +20,7 @@ export function CountryList({ countries }: CountryListProps) {
                   alt={`${country.name.common} flag`}
                   width={32}
                   height={24}
-                  className="w-8 h-6 mr-2"
+                  className="w-8 h-6 mr-2 mb-3"
                 />
                 {country.name.common}
               </CardTitle>
