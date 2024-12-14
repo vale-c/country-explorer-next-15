@@ -29,4 +29,13 @@ export interface Country {
       common: string;
     };
   };
+  borders?: string[];
+  timezones?: string[];
+  osmId?: string;
+  latlng?: [number, number];
+  landlocked: boolean;
+  car?: {
+    side: string;
+  };
+  tld?: string[];
 }
