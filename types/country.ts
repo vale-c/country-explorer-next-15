@@ -23,4 +23,10 @@ export interface Country {
       symbol: string;
     };
   };
+  translations: {
+    [key: string]: {
+      official: string;
+      common: string;
+    };
+  };
 }

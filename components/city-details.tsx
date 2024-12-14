@@ -10,7 +10,6 @@ import Link from "next/link";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "@/components/ui/button";
 
-// Fix for Leaflet's default marker icons using static paths
 const markerIcon = new L.Icon({
   iconUrl: "/leaflet/images/marker-icon.png",
   iconRetinaUrl: "/leaflet/images/marker-icon-2x.png",
@@ -33,7 +32,7 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
     <div className="space-y-8">
       <Link
         href={`/country/${cityDetails.address.country_code}`}
-        className={buttonVariants({ variant: "outline" })}
+        className={buttonVariants({ variant: "ghost" })}
       >
         <ArrowLeftIcon className="mr-2 h-5 w-5" />
         Back to {cityDetails.address.country}
@@ -89,7 +88,7 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
               scrollWheelZoom={false}
             >
               <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                url="https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               />
               <Marker position={[lat, lon]} icon={markerIcon}>

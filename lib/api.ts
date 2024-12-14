@@ -3,14 +3,19 @@ import { Country } from "@/types/country"
 export async function getCountries() {
   try {
     const response = await fetch(
-      "https://restcountries.com/v3.1/all?fields=name,cca3,flags,capital,region,population",
+      "https://restcountries.com/v3.1/all?fields=name,cca3,flags,capital,region,population,translations",
       { cache: "no-store" }
     )
     if (!response.ok) throw new Error(`Failed to fetch countries. Status: ${response.status}`)
 
     const countries = await response.json()
 
-    return countries.sort((a: Country, b: Country) => a.name.common.localeCompare(b.name.common))
+    return countries
+      .map((country: Country) => ({
+        ...country,
+        name: { common: country.translations?.eng?.common || country.name.common },
+      }))
+      .sort((a: Country, b: Country) => a.name.common.localeCompare(b.name.common))
   } catch (error) {
     console.error("Error fetching countries:", error)
     return []
@@ -55,12 +60,14 @@ export async function searchCountries(query: string) {
 
 export async function getCityDetails(lat: number, lon: number) {
   try {
-    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
-    if (!response.ok) throw new Error('Failed to fetch city details')
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&accept-language=en`
+    )
+    if (!response.ok) throw new Error("Failed to fetch city details")
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Error fetching city details:', error)
+    console.error("Error fetching city details:", error)
     return null
   }
 }
