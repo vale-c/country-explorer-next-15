@@ -1,11 +1,14 @@
 // components/city-details.tsx
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { CityData } from "@/types/city"
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet"
-import "leaflet/dist/leaflet.css"
-import L from "leaflet"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CityData } from "@/types/city";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import Link from "next/link";
+import { ArrowLeftIcon } from "@radix-ui/react-icons";
+import { buttonVariants } from "@/components/ui/button";
 
 // Fix for Leaflet's default marker icons using static paths
 const markerIcon = new L.Icon({
@@ -16,18 +19,26 @@ const markerIcon = new L.Icon({
   iconAnchor: [12, 41],
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
-})
+});
 
 interface CityDetailsProps {
-  cityDetails: CityData
+  cityDetails: CityData;
 }
 
 export function CityDetails({ cityDetails }: CityDetailsProps) {
-  const lat = parseFloat(cityDetails.lat)
-  const lon = parseFloat(cityDetails.lon)
+  const lat = parseFloat(cityDetails.lat);
+  const lon = parseFloat(cityDetails.lon);
 
   return (
     <div className="space-y-8">
+      <Link
+        href={`/country/${cityDetails.address.country_code}`}
+        className={buttonVariants({ variant: "outline" })}
+      >
+        <ArrowLeftIcon className="mr-2 h-5 w-5" />
+        Back to {cityDetails.address.country}
+      </Link>
+
       <h1 className="text-4xl font-bold text-center mb-6">
         {cityDetails.address.city || cityDetails.address.town}
       </h1>
@@ -37,10 +48,18 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
             <CardTitle>Location</CardTitle>
           </CardHeader>
           <CardContent>
-            <p><strong>Country:</strong> {cityDetails.address.country}</p>
-            <p><strong>State:</strong> {cityDetails.address.state}</p>
-            <p><strong>County:</strong> {cityDetails.address.county}</p>
-            <p><strong>Postcode:</strong> {cityDetails.address.postcode}</p>
+            <p>
+              <strong>Country:</strong> {cityDetails.address.country}
+            </p>
+            <p>
+              <strong>State:</strong> {cityDetails.address.state}
+            </p>
+            <p>
+              <strong>County:</strong> {cityDetails.address.county}
+            </p>
+            <p>
+              <strong>Postcode:</strong> {cityDetails.address.postcode}
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -48,8 +67,12 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
             <CardTitle>Coordinates</CardTitle>
           </CardHeader>
           <CardContent>
-            <p><strong>Latitude:</strong> {cityDetails.lat}</p>
-            <p><strong>Longitude:</strong> {cityDetails.lon}</p>
+            <p>
+              <strong>Latitude:</strong> {cityDetails.lat}
+            </p>
+            <p>
+              <strong>Longitude:</strong> {cityDetails.lon}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -72,7 +95,9 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
               <Marker position={[lat, lon]} icon={markerIcon}>
                 <Popup>
                   <div className="text-center">
-                    <h2 className="font-bold">{cityDetails.address.city || cityDetails.address.town}</h2>
+                    <h2 className="font-bold">
+                      {cityDetails.address.city || cityDetails.address.town}
+                    </h2>
                     <p>{cityDetails.address.country}</p>
                   </div>
                 </Popup>
@@ -82,5 +107,5 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

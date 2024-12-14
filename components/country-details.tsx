@@ -1,10 +1,10 @@
-import Image from 'next/image'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Country } from '@/types/country'
-import { CitySearch } from '@/components/city-search'
+import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Country } from "@/types/country";
+import { CitySearch } from "@/components/city-search";
 
 interface CountryDetailsProps {
-  country: Country
+  country: Country;
 }
 
 export function CountryDetails({ country }: CountryDetailsProps) {
@@ -27,7 +27,7 @@ export function CountryDetails({ country }: CountryDetailsProps) {
             <CardTitle>General Information</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Capital: {country.capital?.[0] || 'N/A'}</p>
+            <p>Capital: {country.capital?.[0] || "N/A"}</p>
             <p>Region: {country.region}</p>
             <p>Subregion: {country.subregion}</p>
             <p>Population: {country.population.toLocaleString()}</p>
@@ -52,16 +52,17 @@ export function CountryDetails({ country }: CountryDetailsProps) {
           </CardHeader>
           <CardContent>
             <ul>
-              {Object.values(country.currencies || {}).map((currency: { name: string; symbol: string }) => (
-                <li key={currency.name}>
-                  {currency.name} ({currency.symbol})
-                </li>
-              ))}
+              {Object.values(country.currencies || {}).map(
+                (currency: { name: string; symbol: string }) => (
+                  <li key={currency.name}>
+                    {currency.name} ({currency.symbol})
+                  </li>
+                )
+              )}
             </ul>
           </CardContent>
         </Card>
       </div>
-      
     </div>
-  )
+  );
 }
