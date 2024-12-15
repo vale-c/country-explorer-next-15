@@ -21,7 +21,7 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-4xl font-bold">Search Results</h1>
+      <h1 className="text-2xl font-bold mt-8">Search Results</h1>
       {results.length > 0 ? (
         isCitySearch ? (
           <CityList cities={results} />
