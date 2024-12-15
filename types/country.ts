@@ -48,12 +48,9 @@ export interface Country {
 export interface QualityOfLife {
   education: number;
   overall: number;
-  costOfLiving: number;
-  safety: number;
+  costOfLiving?: number;
   healthcare: number;
-  internetSpeed: number;
+  internetSpeed?: number;
   gdpPerCapita: number;
-  unemploymentRate: number;
   lifeExpectancy: number;
-  tourismReceipts: number;
 }

@@ -17,11 +17,14 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Country, QualityOfLife } from "@/types/country";
-import { CitySearch } from "@/components/city-search";
 
 interface CountryDetailsProps {
   country: Country;
   qualityOfLife: QualityOfLife;
+}
+
+interface InternetSpeeds {
+  [key: string]: number;
 }
 
 export function CountryDetails({
@@ -30,6 +33,7 @@ export function CountryDetails({
 }: CountryDetailsProps) {
   const [countryImage, setCountryImage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [internetSpeed, setInternetSpeed] = useState<number | null>(null);
 
   useEffect(() => {
     const getCountryImage = async () => {
@@ -47,7 +51,45 @@ export function CountryDetails({
     };
 
     getCountryImage();
-  }, [country.name.common]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const fetchInternetSpeeds = async () => {
+      try {
+        const response = await fetch("/internet_speeds.json");
+        if (!response.ok) {
+          console.error(
+            `Error fetching internet speeds: ${response.statusText}`
+          );
+          return;
+        }
+
+        const speeds: InternetSpeeds = await response.json();
+        // Normalize the keys in the JSON to lowercase for easy comparison
+        const normalizedSpeeds: InternetSpeeds = Object.fromEntries(
+          Object.entries(speeds).map(([key, value]) => [
+            key.toLowerCase().trim(),
+            value,
+          ])
+        );
+        // Normalize the country name to lowercase and trim spaces
+        const normalizedCountryName = country.name.common.toLowerCase().trim();
+        const speed = normalizedSpeeds[normalizedCountryName];
+
+        if (speed !== undefined) {
+          setInternetSpeed(speed);
+        } else {
+          setInternetSpeed(null);
+        }
+      } catch (error) {
+        console.error(`Error loading internet speeds: ${error}`);
+      }
+    };
+
+    fetchInternetSpeeds();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <article className="space-y-8">
@@ -88,8 +130,6 @@ export function CountryDetails({
             <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="qualityOfLife">Quality of Life</TabsTrigger>
-              <TabsTrigger value="economy">Economy</TabsTrigger>
-              <TabsTrigger value="geography">Geography</TabsTrigger>
             </TabsList>
 
             <AnimatePresence mode="wait">
@@ -167,90 +207,8 @@ export function CountryDetails({
                       </CardContent>
                     </Card>
                   </div>
-                </TabsContent>
 
-                {/* Quality of Life Tab Content */}
-                <TabsContent value="qualityOfLife" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="flex items-center gap-2">
-                        <Shield className="h-5 w-5" />
-                        Quality of Life
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Cost of Living
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.costOfLiving}/100
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Safety
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.safety}/100
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <Heart className="h-6 w-6 text-red-600 dark:text-red-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Healthcare
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.healthcare}/100
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <BookOpen className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Education
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.education}/100
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <Wifi className="h-6 w-6 text-purple-600 dark:text-purple-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Internet Speed
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.internetSpeed} Mbps
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-gray-800">
-                        <Clock className="h-6 w-6 text-gray-600 dark:text-gray-400 mr-2" />
-                        <div>
-                          <p className="text-sm text-muted-foreground">
-                            Life Expectancy
-                          </p>
-                          <p className="text-lg font-bold">
-                            {qualityOfLife.lifeExpectancy} years
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </TabsContent>
-
-                {/* Economy Tab Content */}
-                <TabsContent value="economy" className="space-y-6">
+                  {/* Economy Tab Content */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -274,36 +232,10 @@ export function CountryDetails({
                           country.
                         </p>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">
-                          Tourism Receipts (current US$)
-                        </p>
-                        <p className="text-2xl font-bold">
-                          ${qualityOfLife.tourismReceipts.toLocaleString()}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          Tourism receipts represent the total income generated
-                          from international tourism in the country. This
-                          includes all spending by foreign visitors on goods and
-                          services, such as accommodation, food, entertainment,
-                          and transportation, and is a key indicator of a
-                          country&apos;s attractiveness to visitors.
-                        </p>
-                      </div>
                     </CardContent>
                   </Card>
-                </TabsContent>
 
-                {/* Geography Tab Content */}
-                <TabsContent value="geography" className="space-y-6">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Cities</CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      <CitySearch countryCode={country.cca2} />
-                    </CardContent>
-                  </Card>
+                  {/* Geography Tab Content */}
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -336,6 +268,76 @@ export function CountryDetails({
                             ? "This country is landlocked"
                             : "This country has access to the sea"}
                         </p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Quality of Life Tab Content */}
+                <TabsContent value="qualityOfLife" className="space-y-6">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Shield className="h-5 w-5" />
+                        Quality of Life
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-black">
+                        <DollarSign className="h-6 w-6 text-green-600 dark:text-green-400 mr-2" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Cost of Living
+                          </p>
+                          <p className="text-lg font-bold">
+                            {qualityOfLife.costOfLiving}/100
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-black">
+                        <Heart className="h-6 w-6 text-red-600 dark:text-red-400 mr-2" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Healthcare
+                          </p>
+                          <p className="text-lg font-bold">
+                            {qualityOfLife.healthcare}/100
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-black">
+                        <BookOpen className="h-6 w-6 text-yellow-600 dark:text-yellow-400 mr-2" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Education
+                          </p>
+                          <p className="text-lg font-bold">
+                            {qualityOfLife.education}/100
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-black">
+                        <Wifi className="h-6 w-6 text-purple-600 dark:text-purple-400 mr-2" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Internet Speed
+                          </p>
+                          <p className="text-lg font-bold">
+                            {internetSpeed} Mbps
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center p-4 border rounded-lg shadow-md bg-white dark:bg-black">
+                        <Clock className="h-6 w-6 text-gray-600 dark:text-gray-400 mr-2" />
+                        <div>
+                          <p className="text-sm text-muted-foreground">
+                            Life Expectancy
+                          </p>
+                          <p className="text-lg font-bold">
+                            {qualityOfLife.lifeExpectancy} years
+                          </p>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
