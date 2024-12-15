@@ -29,7 +29,7 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
   const lon = parseFloat(cityDetails.lon);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 mt-8">
       <Link
         href={`/country/${cityDetails.address.country_code}`}
         className={buttonVariants({ variant: "ghost" })}
