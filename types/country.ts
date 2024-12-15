@@ -52,11 +52,11 @@ export interface QualityOfLife {
   costOfLiving: number;
   safety: number;
   healthcare: number;
-  climate: number;
   internetSpeed: number;
   gdpPerCapita: number;
   unemploymentRate: number;
   lifeExpectancy: number;
+  tourismReceipts: number;
 }
 
 export interface Attraction {

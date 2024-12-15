@@ -10,6 +10,9 @@ export async function getCountryData(
     "SP.DYN.LE00.IN", // Life expectancy
     "SE.XPD.TOTL.GD.ZS", // Government expenditure on education
     "SH.XPD.CHEX.GD.ZS", // Current health expenditure
+    "IT.NET.USER.ZS", // Internet users (% of population)
+    "IT.NET.BBND", // Fixed broadband subscriptions (per 100 people)
+    "ST.INT.ARVL", // Tourism receipts (current US$)
   ];
 
   const responses = await Promise.all(
@@ -20,15 +23,31 @@ export async function getCountryData(
     )
   );
 
-  const [gdpPerCapita, unemploymentRate, lifeExpectancy, educationExpenditure] =
-    responses.map((res) => res?.[1]?.[0]?.value || 0);
+  const [
+    gdpPerCapita,
+    unemploymentRate,
+    lifeExpectancy,
+    educationExpenditure,
+    internetUsersPercentage,
+    broadbandSubscriptions,
+    tourismReceipts,
+  ] = responses.map((res) => res?.[1]?.[0]?.value || 0);
 
   // Calculate quality of life scores (simplified calculation for demonstration)
   const costOfLiving = Math.max(0, 100 - gdpPerCapita / 1000);
-  const safety = Math.min(100, 100 - unemploymentRate);
+  const safety = Math.max(0, 100 - unemploymentRate);
   const healthcare = (lifeExpectancy / 85) * 100;
   const education = (educationExpenditure / 10) * 100;
   const overall = (costOfLiving + safety + healthcare + education) / 4;
+
+  // Calculate internet speed
+  const population = 1000000; // Replace with actual population data if available
+  const internetUsers = (internetUsersPercentage / 100) * population;
+  const broadbandUsers = (broadbandSubscriptions / 100) * population;
+
+  // Estimate internet speed (in Mbps)
+  const internetSpeed =
+    broadbandUsers > 0 ? (internetUsers / broadbandUsers) * 10 : 0; // Adjust the multiplier as needed
 
   return {
     overall: Math.round(overall),
@@ -39,7 +58,7 @@ export async function getCountryData(
     gdpPerCapita: Math.round(gdpPerCapita),
     unemploymentRate: Math.round(unemploymentRate * 10) / 10,
     lifeExpectancy: Math.round(lifeExpectancy * 10) / 10,
-    climate: 0,
-    internetSpeed: 0,
+    internetSpeed: Math.round(internetSpeed),
+    tourismReceipts: Math.round(tourismReceipts),
   };
 }

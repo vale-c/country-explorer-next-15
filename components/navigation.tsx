@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { ModeToggle } from "./ui/mode-toggle";
 // import { usePathname } from "next/navigation";
 // import { Button } from "@/components/ui/button";
-// import { ModeToggle } from "@/components/mode-toggle";
 
 // const navItems = [{ href: "/", label: "Home" }];
 
@@ -26,8 +26,8 @@ export function Navigation() {
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
-          <ModeToggle />
         </div> */}
+        <ModeToggle />
       </div>
     </nav>
   );
