@@ -82,9 +82,6 @@ export async function getCountryData(
     lifeExpectancy,
     educationExpenditure,
     healthExpenditure,
-    fixedBroadband,
-    mobileBroadband,
-    internetUsers,
   ] = await Promise.all([
     fetchLatestValue(countryCode, INDICATORS.pppGdpPerCapita),
     fetchLatestValue(countryCode, INDICATORS.lifeExpectancy),
