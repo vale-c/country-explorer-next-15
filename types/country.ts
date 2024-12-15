@@ -42,7 +42,6 @@ export interface Country {
   capitalInfo?: {
     latlng: [number, number];
   };
-  attractions?: Attraction[];
   economyOverview?: string;
 }
 
@@ -57,10 +56,4 @@ export interface QualityOfLife {
   unemploymentRate: number;
   lifeExpectancy: number;
   tourismReceipts: number;
-}
-
-export interface Attraction {
-  name: string;
-  description: string;
-  image: string;
 }
