@@ -9,7 +9,7 @@ export default async function CountriesPage() {
 
   return (
     <div className="container mx-auto">
-      <div className="relative mb-8 h-[500px] md:h-[700px] overflow-hidden rounded-lg">
+      <div className="relative mb-8 h-[500px] md:h-[700px] overflow-hidden rounded-lg -mt-8">
         <InteractiveMap />
       </div>
       <h1 className="text-4xl font-bold mb-6">Countries</h1>

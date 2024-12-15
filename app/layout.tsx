@@ -21,7 +21,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <Navigation />
-          <main className="container mx-auto px-4 pb-8">{children}</main>
+          <main className="container mx-auto px-4 py-8">{children}</main>
         </ThemeProvider>
       </body>
     </html>

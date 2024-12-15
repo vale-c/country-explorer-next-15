@@ -36,33 +36,31 @@ export const InteractiveMap = () => {
       >
         <Geographies geography={geoUrl}>
           {({ geographies }: { geographies: CustomGeographyProps[] }) =>
-            geographies.map((geo) => {
-              console.log(geo);
-              return (
-                <Geography
-                  key={geo.properties.name}
-                  geography={geo}
-                  onMouseEnter={() => setHoveredCountry(geo.properties.name)}
-                  onMouseLeave={() => setHoveredCountry(null)}
-                  onClick={() => router.push(`/country/${geo.id}`)}
-                  style={{
-                    default: {
-                      fill: "#2A2A2A",
-                      stroke: "#1E1E1E",
-                      strokeWidth: 0.5,
-                      outline: "none",
-                      cursor: "pointer",
-                    },
-                    hover: {
-                      fill: "#00FFFF",
-                      stroke: "#1E1E1E",
-                      strokeWidth: 0.5,
-                      outline: "none",
-                    },
-                  }}
-                />
-              );
-            })
+            geographies.map((geo) => (
+              <Geography
+                key={geo.properties.name}
+                geography={geo}
+                onMouseEnter={() => setHoveredCountry(geo.properties.name)}
+                onMouseLeave={() => setHoveredCountry(null)}
+                onClick={() => router.push(`/country/${geo.id}`)}
+                style={{
+                  default: {
+                    fill: "#2A2A2A",
+                    stroke: "#1E1E1E",
+                    strokeWidth: 0.5,
+                    outline: "none",
+                    cursor: "pointer",
+                  },
+                  hover: {
+                    cursor: "pointer",
+                    fill: "#00FFFF",
+                    stroke: "#1E1E1E",
+                    strokeWidth: 0.5,
+                    outline: "none",
+                  },
+                }}
+              />
+            ))
           }
         </Geographies>
       </ComposableMap>

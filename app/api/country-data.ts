@@ -21,7 +21,7 @@ export async function getCountryData(
   );
 
   const [gdpPerCapita, unemploymentRate, lifeExpectancy, educationExpenditure] =
-    responses.map((res) => res[1][0]?.value || 0);
+    responses.map((res) => res?.[1]?.[0]?.value || 0);
 
   // Calculate quality of life scores (simplified calculation for demonstration)
   const costOfLiving = Math.max(0, 100 - gdpPerCapita / 1000);
