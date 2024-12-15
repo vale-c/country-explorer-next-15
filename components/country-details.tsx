@@ -17,6 +17,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Country, QualityOfLife } from "@/types/country";
+import { CitySearch } from "./city-search";
 
 interface CountryDetailsProps {
   country: Country;
@@ -348,6 +349,14 @@ export function CountryDetails({
         </div>
 
         <aside className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Search</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <CitySearch countryCode={country.cca3} />
+            </CardContent>
+          </Card>
           <Card>
             <CardHeader>
               <CardTitle>Quick Facts</CardTitle>
