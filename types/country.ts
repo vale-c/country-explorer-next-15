@@ -38,4 +38,29 @@ export interface Country {
     side: string;
   };
   tld?: string[];
+  qualityOfLife?: QualityOfLife;
+  capitalInfo?: {
+    latlng: [number, number];
+  };
+  attractions?: Attraction[];
+  economyOverview?: string;
+}
+
+export interface QualityOfLife {
+  education: number;
+  overall: number;
+  costOfLiving: number;
+  safety: number;
+  healthcare: number;
+  climate: number;
+  internetSpeed: number;
+  gdpPerCapita: number;
+  unemploymentRate: number;
+  lifeExpectancy: number;
+}
+
+export interface Attraction {
+  name: string;
+  description: string;
+  image: string;
 }
