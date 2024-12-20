@@ -1,7 +1,8 @@
-import { getCountries } from '@/lib/api';
-import { CountryList } from '@/components/country-list';
+import { getCountries } from '@/app/country/_actions/get-country-data.action';
+
+import { CountryList } from '@/app/country/country-list';
 import { Country } from '@/types/country';
-import { CountrySearch } from '@/components/country-search';
+import { CountrySearch } from '@/app/country/country-search';
 import { InteractiveMap } from '@/components/interactive-map';
 
 export default async function CountriesPage() {

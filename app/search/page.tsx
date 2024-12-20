@@ -1,6 +1,7 @@
-import { searchCities, searchCountries } from "@/lib/api";
-import { CityList } from "@/components/city-list";
-import { CountryList } from "@/components/country-list";
+import { searchCity } from '@/app/city/_actions/search-city.action';
+import { searchCountries } from '@/app/country/_actions/get-country-data.action';
+import { CityList } from '@/app/city/city-list';
+import { CountryList } from '@/app/country/country-list';
 
 interface SearchPageProps {
   searchParams: Promise<{ q: string; country?: string; type: string }>;
@@ -12,10 +13,10 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   let results = [];
   let isCitySearch = false;
 
-  if (type === "city") {
+  if (type === 'city') {
     isCitySearch = true;
-    results = await searchCities(`${q}, ${country}`);
-  } else if (type === "country") {
+    results = await searchCity(`${q}, ${country}`);
+  } else if (type === 'country') {
     results = await searchCountries(q);
   }
 

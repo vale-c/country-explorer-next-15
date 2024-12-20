@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
-import { getCityDetails } from "@/lib/api";
-import { CityDetails } from "@/components/city-details";
+import { notFound } from 'next/navigation';
+import { getCityDetails } from '@/app/city/_actions/get-city-details.action';
+import { CityDetails } from '@/app/city/city-details';
+import { MapWrapper } from '@/components/map-wrapper';
 
 interface CityPageProps {
   params: Promise<{ lat: string; lon: string }>;
@@ -13,7 +14,7 @@ export default async function CityPage({ params }: CityPageProps) {
   const parsedLon = parseFloat(lon);
 
   if (isNaN(parsedLat) || isNaN(parsedLon)) {
-    console.error("Invalid coordinates:", lat, lon);
+    console.error('Invalid coordinates:', lat, lon);
     notFound();
   }
 
@@ -23,5 +24,14 @@ export default async function CityPage({ params }: CityPageProps) {
     notFound();
   }
 
-  return <CityDetails cityDetails={cityDetails} />;
+  return (
+    <div className="space-y-8">
+      <CityDetails cityDetails={cityDetails} />
+      <MapWrapper
+        lat={parsedLat}
+        lon={parsedLon}
+        popupContent={cityDetails.display_name}
+      />
+    </div>
+  );
 }

@@ -11,7 +11,7 @@ export async function getCountryImage(countryName: string) {
           Authorization: `Client-ID ${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`,
         },
         next: {
-          revalidate: 86400, // Cache for 24 hours
+          revalidate: 86400,
           tags: [`country-image-${countryName}`],
         },
       }
