@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect, Suspense } from "react";
-import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { useState, useEffect, Suspense } from 'react';
+import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Globe,
   Users,
@@ -13,15 +13,18 @@ import {
   Wifi,
   Mountain,
   Clock,
-} from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Country, QualityOfLife } from "@/types/country";
-import { CitySearch } from "./city-search";
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Country, QualityOfLife } from '@/types/country';
+import { CitySearch } from './city-search';
+import { numberFormatter, decimalFormatter } from '@/lib/utils/formatters';
+import { FormattedNumber } from '@/components/server/formatted-number';
 
 interface CountryDetailsProps {
   country: Country;
   qualityOfLife: QualityOfLife;
+  countryImage: string | null;
 }
 
 interface InternetSpeeds {
@@ -31,34 +34,15 @@ interface InternetSpeeds {
 export function CountryDetails({
   country,
   qualityOfLife,
+  countryImage,
 }: CountryDetailsProps) {
-  const [countryImage, setCountryImage] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState("overview");
-  const [internetSpeed, setInternetSpeed] = useState<number | null>(null);
-
-  useEffect(() => {
-    const getCountryImage = async () => {
-      try {
-        const response = await fetch(
-          `/api/unsplash?query=${encodeURIComponent(country.name.common)}`
-        );
-        if (!response.ok) throw new Error("Failed to fetch image");
-
-        const data = await response.json();
-        setCountryImage(data.imageUrl);
-      } catch (error) {
-        console.error("Error fetching image:", error);
-      }
-    };
-
-    getCountryImage();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const [activeTab, setActiveTab] = useState('overview');
+  const [internetSpeed, setInternetSpeed] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInternetSpeeds = async () => {
       try {
-        const response = await fetch("/internet_speeds.json");
+        const response = await fetch('/internet_speeds.json');
         if (!response.ok) {
           console.error(
             `Error fetching internet speeds: ${response.statusText}`
@@ -79,7 +63,7 @@ export function CountryDetails({
         const speed = normalizedSpeeds[normalizedCountryName];
 
         if (speed !== undefined) {
-          setInternetSpeed(speed);
+          setInternetSpeed(decimalFormatter.format(speed));
         } else {
           setInternetSpeed(null);
         }
@@ -104,7 +88,7 @@ export function CountryDetails({
         >
           <Image
             src={countryImage || country.flags?.svg}
-            alt={`${country.name?.common ?? "Unknown"} landscape`}
+            alt={`${country.name?.common ?? 'Unknown'} landscape`}
             fill
             className="object-cover"
             priority
@@ -113,10 +97,10 @@ export function CountryDetails({
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 p-8">
           <h1 className="text-5xl font-bold text-white mb-2">
-            {country.name?.common ?? "Unknown"}
+            {country.name?.common ?? 'Unknown'}
           </h1>
           <p className="text-white/80 text-xl">
-            {country.name?.official ?? "Unknown"}
+            {country.name?.official ?? 'Unknown'}
           </p>
         </div>
       </motion.header>
@@ -157,7 +141,7 @@ export function CountryDetails({
                             Population
                           </p>
                           <p className="text-2xl font-bold">
-                            {country.population?.toLocaleString() ?? "N/A"}
+                            <FormattedNumber value={country.population} />
                           </p>
                         </div>
                         <div>
@@ -193,8 +177,8 @@ export function CountryDetails({
                             Region
                           </p>
                           <p className="font-medium">
-                            {country.region ?? "Unknown"} (
-                            {country.subregion ?? "Unknown"})
+                            {country.region ?? 'Unknown'} (
+                            {country.subregion ?? 'Unknown'})
                           </p>
                         </div>
                         <div>
@@ -202,7 +186,7 @@ export function CountryDetails({
                             Capital
                           </p>
                           <p className="font-medium">
-                            {country.capital?.[0] ?? "N/A"}
+                            {country.capital?.[0] ?? 'N/A'}
                           </p>
                         </div>
                       </CardContent>
@@ -223,7 +207,8 @@ export function CountryDetails({
                           GDP per capita (USD)
                         </p>
                         <p className="text-2xl font-bold">
-                          ${qualityOfLife.gdpPerCapita.toLocaleString()}
+                          $
+                          <FormattedNumber value={qualityOfLife.gdpPerCapita} />
                         </p>
                         <p className="text-sm text-muted-foreground">
                           GDP per capita is the total economic output of a
@@ -248,7 +233,7 @@ export function CountryDetails({
                       <div>
                         <p className="text-sm text-muted-foreground">Area</p>
                         <p className="text-2xl font-bold">
-                          {country.area?.toLocaleString() ?? "N/A"} km²
+                          <FormattedNumber value={country.area} /> km²
                         </p>
                       </div>
                       <div>
@@ -256,8 +241,18 @@ export function CountryDetails({
                           Coordinates
                         </p>
                         <p className="font-medium">
-                          {country.latlng?.[0]?.toFixed(2) ?? "0.00"}°N,{" "}
-                          {country.latlng?.[1]?.toFixed(2) ?? "0.00"}°E
+                          <FormattedNumber
+                            value={country.latlng?.[0] ?? 0}
+                            maximumFractionDigits={2}
+                            minimumFractionDigits={2}
+                          />
+                          °N,{' '}
+                          <FormattedNumber
+                            value={country.latlng?.[1] ?? 0}
+                            maximumFractionDigits={2}
+                            minimumFractionDigits={2}
+                          />
+                          °E
                         </p>
                       </div>
                       <div>
@@ -266,8 +261,8 @@ export function CountryDetails({
                         </p>
                         <p className="font-medium">
                           {country.landlocked
-                            ? "This country is landlocked"
-                            : "This country has access to the sea"}
+                            ? 'This country is landlocked'
+                            : 'This country has access to the sea'}
                         </p>
                       </div>
                     </CardContent>
@@ -291,7 +286,10 @@ export function CountryDetails({
                             Cost of Living
                           </p>
                           <p className="text-lg font-bold">
-                            {qualityOfLife.costOfLiving}/100
+                            <FormattedNumber
+                              value={qualityOfLife.costOfLiving}
+                            />
+                            /100
                           </p>
                         </div>
                       </div>
@@ -303,7 +301,8 @@ export function CountryDetails({
                             Healthcare
                           </p>
                           <p className="text-lg font-bold">
-                            {qualityOfLife.healthcare}/100
+                            <FormattedNumber value={qualityOfLife.healthcare} />
+                            /100
                           </p>
                         </div>
                       </div>
@@ -314,7 +313,8 @@ export function CountryDetails({
                             Education
                           </p>
                           <p className="text-lg font-bold">
-                            {qualityOfLife.education}/100
+                            <FormattedNumber value={qualityOfLife.education} />
+                            /100
                           </p>
                         </div>
                       </div>
@@ -325,7 +325,7 @@ export function CountryDetails({
                             Internet Speed
                           </p>
                           <p className="text-lg font-bold">
-                            {internetSpeed} Mbps
+                            {internetSpeed ? `${internetSpeed} Mbps` : 'N/A'}
                           </p>
                         </div>
                       </div>
@@ -336,7 +336,10 @@ export function CountryDetails({
                             Life Expectancy
                           </p>
                           <p className="text-lg font-bold">
-                            {qualityOfLife.lifeExpectancy} years
+                            <FormattedNumber
+                              value={qualityOfLife.lifeExpectancy}
+                            />{' '}
+                            years
                           </p>
                         </div>
                       </div>
@@ -364,8 +367,8 @@ export function CountryDetails({
             <CardContent className="space-y-4">
               <div className="flex items-center">
                 <Image
-                  src={country.flags?.svg ?? "/default-flag.svg"}
-                  alt={`${country.name?.common ?? "Unknown"} flag`}
+                  src={country.flags?.svg ?? '/default-flag.svg'}
+                  alt={`${country.name?.common ?? 'Unknown'} flag`}
                   width={40}
                   height={30}
                   className="mr-2"
@@ -375,13 +378,13 @@ export function CountryDetails({
               <div>
                 <p className="text-sm text-muted-foreground">Driving Side</p>
                 <p className="font-medium capitalize">
-                  {country.car?.side ?? "N/A"}
+                  {country.car?.side ?? 'N/A'}
                 </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Country Code</p>
                 <p className="font-medium">
-                  {country.cca2 ?? "N/A"} / {country.cca3 ?? "N/A"}
+                  {country.cca2 ?? 'N/A'} / {country.cca3 ?? 'N/A'}
                 </p>
               </div>
               {country.tld && (

@@ -1,22 +1,22 @@
-import { NextResponse } from "next/server";
-import axios from "axios";
+import { NextResponse } from 'next/server';
+import axios from 'axios';
 
 const UNSPLASH_ACCESS_KEY = process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY;
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get("query");
+  const query = searchParams.get('query');
 
   if (!query) {
     return NextResponse.json(
-      { error: "Missing query parameter" },
+      { error: 'Missing query parameter' },
       { status: 400 }
     );
   }
 
   if (!UNSPLASH_ACCESS_KEY) {
     return NextResponse.json(
-      { error: "Unsplash Access Key not defined" },
+      { error: 'Unsplash Access Key not defined' },
       { status: 500 }
     );
   }
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
       params: {
         query: encodedQuery,
         per_page: 1,
-        orientation: "landscape",
+        orientation: 'landscape',
       },
       headers: {
         Authorization: `Client-ID ${UNSPLASH_ACCESS_KEY}`,
@@ -39,9 +39,9 @@ export async function GET(request: Request) {
 
     return NextResponse.json({ imageUrl });
   } catch (error) {
-    console.error("Error fetching image from Unsplash:", error);
+    console.error('Error fetching image from Unsplash:', error);
     return NextResponse.json(
-      { error: "Failed to fetch image" },
+      { error: 'Failed to fetch image' },
       { status: 500 }
     );
   }

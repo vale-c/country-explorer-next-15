@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
-import { Country } from "@/types/country";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from 'react';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Image from 'next/image';
+import { Country } from '@/types/country';
+import { Button } from '@/components/ui/button';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { numberFormatter } from '@/lib/utils/formatters';
 
 interface CountryListProps {
   countries: Country[];
@@ -36,8 +37,8 @@ export function CountryList({ countries }: CountryListProps) {
     <div>
       <div className="flex justify-between items-center mb-4">
         <p className="text-sm text-muted-foreground">
-          Showing {indexOfFirstCountry + 1} to{" "}
-          {Math.min(indexOfLastCountry, countries.length)} of {countries.length}{" "}
+          Showing {indexOfFirstCountry + 1} to{' '}
+          {Math.min(indexOfLastCountry, countries.length)} of {countries.length}{' '}
           countries
         </p>
       </div>
@@ -59,14 +60,14 @@ export function CountryList({ countries }: CountryListProps) {
               </CardHeader>
               <CardContent>
                 <p>
-                  <strong>Capital:</strong> {country.capital?.[0] || "N/A"}
+                  <strong>Capital:</strong> {country.capital?.[0] || 'N/A'}
                 </p>
                 <p>
-                  <strong>Region:</strong> {country.region || "N/A"}
+                  <strong>Region:</strong> {country.region || 'N/A'}
                 </p>
                 <p>
-                  <strong>Population:</strong>{" "}
-                  {country.population.toLocaleString() || "N/A"}
+                  <strong>Population:</strong>{' '}
+                  {numberFormatter.format(country.population)}
                 </p>
               </CardContent>
             </Card>
@@ -84,7 +85,7 @@ export function CountryList({ countries }: CountryListProps) {
         {Array.from({ length: totalPages }, (_, index) => (
           <Button
             key={index}
-            variant={currentPage === index + 1 ? "default" : "outline"}
+            variant={currentPage === index + 1 ? 'default' : 'outline'}
             onClick={() => handlePageChange(index + 1)}
           >
             {index + 1}
