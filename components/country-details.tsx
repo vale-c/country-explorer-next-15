@@ -18,8 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Country, QualityOfLife } from '@/types/country';
 import { CitySearch } from './city-search';
-import { decimalFormatter } from '@/lib/utils/formatters';
-import { FormattedNumber } from '@/components/server/formatted-number';
+import { decimalFormatter, FormattedNumber } from '@/lib/utils/formatters';
 
 interface CountryDetailsProps {
   country: Country;
