@@ -15,6 +15,13 @@ export async function GET(request: NextRequest) {
     revalidateTag(tag);
     return NextResponse.json({ revalidated: true, tag });
   } catch (error) {
-    return NextResponse.json({ error: 'Revalidation failed' }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: `Revalidation failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      },
+      { status: 500 }
+    );
   }
 }

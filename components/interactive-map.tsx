@@ -46,7 +46,7 @@ export const InteractiveMap = () => {
 
     return {
       scale,
-      center: [0, centerLat],
+      center: [0, centerLat] as [number, number],
     };
   }, []);
 
