@@ -287,7 +287,7 @@ export function CountryDetails({
                           </p>
                           <p className="text-lg font-bold">
                             <FormattedNumber
-                              value={qualityOfLife.costOfLiving}
+                              value={qualityOfLife.costOfLiving ?? 0}
                             />
                             /100
                           </p>
