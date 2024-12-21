@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +10,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 
@@ -18,26 +18,110 @@ interface CountryCardListProps {
   currentPage: number;
   totalPages: number;
   rowsPerPage?: number;
+  imageMap: Record<string, string | null>;
 }
 
-/**
- * Formats a country name by replacing underscores with spaces
- * and capitalizing each word.
- *
- * @param {string} countryName - The raw country name (e.g., "New_Zealand").
- * @returns {string} - The formatted country name (e.g., "New Zealand").
- */
 function formatCountryName(countryName: string): string {
   return countryName
-    .split("_") // Split by underscores
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()) // Capitalize each word
-    .join(" "); // Join the words with spaces
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
+const PRIORITY_ITEMS = [
+  { item: "Apartment (1 bedroom) in City Centre", emoji: "🏙️" },
+  { item: "Meal, Inexpensive Restaurant", emoji: "🍽️" },
+  {
+    item: "Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)",
+    emoji: "🌐",
+  },
+  { item: "One-way Ticket (Local Transport)", emoji: "🚌" },
+];
+
+function getPriorityItems(
+  items: { item: string; price: number }[]
+): { item: string; price: number; emoji: string }[] {
+  return PRIORITY_ITEMS.map(({ item, emoji }) => {
+    const matchingItem = items.find((i) => i.item === item);
+    return matchingItem ? { ...matchingItem, emoji } : null;
+  }).filter(Boolean) as { item: string; price: number; emoji: string }[];
+}
+
+// Updated category map optimized for nomads
+const categoryMap: Record<string, { emoji: string; category: string }> = {
+  // Housing
+  "apartment 1 bedroom in city centre": { emoji: "🏙️", category: "Housing" },
+  "apartment 1 bedroom outside of centre": { emoji: "🏡", category: "Housing" },
+  "apartment 3 bedrooms in city centre": { emoji: "🏢", category: "Housing" },
+  "apartment 3 bedrooms outside of centre": {
+    emoji: "🏠",
+    category: "Housing",
+  },
+
+  // Food & Drinks
+  milk: { emoji: "🥛", category: "Food & Drinks" },
+  cappuccino: { emoji: "☕", category: "Food & Drinks" },
+  "bottle of wine": { emoji: "🍷", category: "Food & Drinks" },
+  "meal inexpensive restaurant": { emoji: "🍽️", category: "Food & Drinks" },
+  "meal for 2 people mid-range restaurant": {
+    emoji: "🍷🍴",
+    category: "Food & Drinks",
+  },
+
+  // Transportation
+  "one-way ticket": { emoji: "🚌", category: "Transportation" },
+  gasoline: { emoji: "⛽", category: "Transportation" },
+  "taxi start": { emoji: "🚕", category: "Transportation" },
+  "monthly pass": { emoji: "🛴", category: "Transportation" },
+
+  // Utilities
+  internet: { emoji: "🌐", category: "Utilities" },
+  "basic electricity heating cooling water garbage": {
+    emoji: "💡",
+    category: "Utilities",
+  },
+
+  // Entertainment & Fitness
+  "fitness club": { emoji: "🏋️", category: "Entertainment & Fitness" },
+  "cinema international release": {
+    emoji: "🎬",
+    category: "Entertainment & Fitness",
+  },
+
+  // Other Costs (limited to 4 items)
+  "1 pair of jeans": { emoji: "👖", category: "Other Costs" },
+  "1 pair of nike running shoes": { emoji: "👟", category: "Other Costs" },
+  "1 summer dress in a chain store": { emoji: "👗", category: "Other Costs" },
+  "mobile phone monthly plan": { emoji: "📱", category: "Other Costs" },
+
+  // Default
+  default: { emoji: "📦", category: "Other Costs" },
+};
+
+function getCategory(itemName: string): { emoji: string; category: string } {
+  const normalize = (str: string) =>
+    str
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .trim();
+
+  const normalizedItem = normalize(itemName);
+
+  for (const key in categoryMap) {
+    const normalizedKey = normalize(key);
+    if (normalizedItem.includes(normalizedKey)) {
+      return categoryMap[key];
+    }
+  }
+
+  return categoryMap.default;
 }
 
 export default function CountryCardList({
   data,
   currentPage,
   totalPages,
+  imageMap,
 }: CountryCardListProps) {
   const router = useRouter();
   const [selectedCountry, setSelectedCountry] = useState<null | {
@@ -51,160 +135,90 @@ export default function CountryCardList({
     }
   };
 
-  const emojiMap: Record<string, string> = {
-    // Food items
-    apples: "🍎",
-    banana: "🍌",
-    oranges: "🍊",
-    tomato: "🍅",
-    potato: "🥔",
-    onion: "🧅",
-    lettuce: "🥬",
-    milk: "🥛", // Milk (1 liter)
-    "loaf of fresh white bread": "🍞", // Fresh white bread
-    rice: "🍚", // White rice (1kg)
-    eggs: "🥚", // Eggs (12)
-    "local cheese": "🧀", // Local cheese (1kg)
-    "chicken fillets": "🍗", // Chicken fillets (1kg)
-    "beef round": "🥩", // Beef round (or back leg red meat)
+  const getCountryImage = (country: string): string =>
+    imageMap[country] || "/placeholder.jpg";
 
-    // Beverages
-    water: "💧",
-    "bottle of wine": "🍷",
-    "domestic beer": "🍺",
-    "imported beer": "🍻",
-    cappuccino: "☕",
-    coke: "🥤", // Coke/Pepsi (bottles or cans)
+  const optimizedCategoryOrder = [
+    "Housing",
+    "Food & Drinks",
+    "Transportation",
+    "Utilities",
+    "Entertainment & Fitness",
+    "Other Costs",
+  ];
 
-    // Dining out
-    "meal inexpensive restaurant": "🍴",
-    "meal for 2 people mid-range restaurant": "🍷🍽️",
-    "mcmeal at mcdonalds": "🍔🍟",
+  const groupItemsByCategory = (
+    items: { item: string; price: number }[]
+  ): Record<string, { emoji: string; item: string; price: number }[]> => {
+    const grouped: Record<
+      string,
+      { emoji: string; item: string; price: number }[]
+    > = {};
 
-    // Transportation
-    "one-way ticket": "🚌",
-    "taxi start": "🚕",
-    "taxi 1km": "🚖",
-    "taxi 1hour waiting": "⏱️",
+    const uniqueItems = items.filter(
+      (item, index, self) =>
+        index === self.findIndex((i) => i.item === item.item)
+    );
 
-    // Fuel and vehicles
-    gasoline: "⛽",
-    "volkswagen golf": "🚗",
-    "toyota corolla": "🚙",
-
-    // Utilities and services
-    "basic electricity heating cooling water garbage": "💡",
-    "mobile phone monthly plan": "📱",
-    internet: "🌐",
-
-    // Fitness and entertainment
-    "fitness club": "🏋️",
-    "tennis court rent": "🎾",
-    "cinema international release": "🎬",
-
-    // Education
-    school: "🏫",
-
-    // Clothing
-    "1 pair of jeans": "👖", // Jeans (e.g., Levi’s)
-    "1 summer dress": "👗", // Summer dress (Zara, H&M)
-    "1 pair of nike running shoes": "👟", // Nike running shoes
-    "1 pair of men leather business shoes": "🥿", // Men's leather business shoes
-
-    // Cigarettes
-    "cigarettes 20 pack": "🚬",
-
-    // Housing and utilities
-    "apartment 1 bedroom in city centre": "🏙️", // 1-bedroom apartment (city center)
-    "apartment 1 bedroom outside of centre": "🏡", // 1-bedroom apartment (outside center)
-    "apartment 3 bedrooms in city centre": "🏢", // 3-bedroom apartment (city center)
-    "apartment 3 bedrooms outside of centre": "🏠", // 3-bedroom apartment (outside center)
-    "price per square meter to buy apartment in city centre": "🏗️", // Price per square meter in city center
-    "price per square meter to buy apartment outside of centre": "🏘️", // Price per square meter outside center
-
-    // Financial
-    "average monthly net salary": "💵", // Monthly salary (after tax)
-    "mortgage interest rate": "📉", // Mortgage interest rate
-
-    // Default fallback
-    default: "📦",
-  };
-
-  /**
-   * Returns the appropriate emoji for an item name using partial matching.
-   * Falls back to the default emoji if no match is found.
-   *
-   * @param {string} itemName - The full name of the item.
-   * @returns {string} - The emoji corresponding to the item name.
-   */
-  function getEmoji(itemName: string): string {
-    // Normalize a string: lowercase, remove punctuation, trim spaces
-    const normalize = (str: string) =>
-      str
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, "") // Remove non-alphanumeric characters
-        .replace(/\s+/g, " ") // Replace multiple spaces with a single space
-        .trim();
-
-    // Normalize the item name
-    const normalizedItem = normalize(itemName);
-
-    // Find the best match in the emoji map
-    let bestMatch = emojiMap.default; // Default emoji
-    let bestMatchLength = 0; // Length of the best-matching key
-
-    for (const key in emojiMap) {
-      const normalizedKey = normalize(key);
-
-      // Check if the normalized key is part of the normalized item name
-      if (
-        normalizedItem.includes(normalizedKey) &&
-        normalizedKey.length > bestMatchLength
-      ) {
-        bestMatch = emojiMap[key];
-        bestMatchLength = normalizedKey.length;
+    uniqueItems.forEach((item) => {
+      const { emoji, category } = getCategory(item.item);
+      if (!grouped[category]) {
+        grouped[category] = [];
       }
+      grouped[category].push({ emoji, item: item.item, price: item.price });
+    });
+
+    // Limit "Other Costs" to 4 items max
+    if (grouped["Other Costs"]?.length > 4) {
+      grouped["Other Costs"] = grouped["Other Costs"].slice(0, 4);
     }
 
-    return bestMatch;
-  }
+    return grouped;
+  };
 
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map(([country, items], index) => (
-          <div key={index} className="flex flex-col h-full">
-            <Card className="flex flex-col h-full">
+        {data.map(([country, items], index) => {
+          const priorityItems = getPriorityItems(items);
+          return (
+            <Card
+              key={index}
+              className="flex flex-col h-full shadow-lg hover:shadow-2xl transition-shadow duration-200 cursor-zoom-in"
+              onClick={() => setSelectedCountry({ country, items })}
+            >
+              <div className="relative w-full h-40 rounded-t-lg overflow-hidden">
+                <Image
+                  src={getCountryImage(country)}
+                  alt={`${country} landscape`}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
+              </div>
               <CardHeader>
-                <CardTitle>{formatCountryName(country)}</CardTitle>
+                <CardTitle className="mt-4 text-center text-xl font-semibold">
+                  {formatCountryName(country)}
+                </CardTitle>
               </CardHeader>
-              <CardContent className="flex-grow">
+              <CardContent>
                 <ul className="space-y-1">
-                  {items.slice(0, 4).map((item, itemIndex) => (
+                  {priorityItems.map((item, itemIndex) => (
                     <li key={itemIndex} className="flex justify-between">
                       <span>
-                        {getEmoji(item.item)} {item.item}
+                        {item.emoji} {item.item}
                       </span>
                       <span>${item.price.toFixed(2)}</span>
                     </li>
                   ))}
                 </ul>
               </CardContent>
-              <div className="p-4">
-                {items.length > 4 && (
-                  <Button
-                    variant="outline"
-                    onClick={() => setSelectedCountry({ country, items })}
-                  >
-                    View More
-                  </Button>
-                )}
-              </div>
             </Card>
-          </div>
-        ))}
+          );
+        })}
       </div>
-      {/* Pagination Controls */}
+
+      {/* Pagination */}
       <div className="flex justify-center items-center mt-8">
         <Button
           variant="outline"
@@ -225,37 +239,62 @@ export default function CountryCardList({
         </Button>
       </div>
 
-      {/* Dialog for full details */}
+      {/* Modal */}
       <Dialog
         open={!!selectedCountry}
         onOpenChange={() => setSelectedCountry(null)}
       >
-        <DialogContent className="max-w-4xl w-full h-[80vh] overflow-hidden">
+        <DialogContent className="max-w-4xl w-full h-[90vh] overflow-hidden p-0">
           {selectedCountry && (
             <>
-              <DialogHeader>
-                <DialogTitle>
+              {/* Country Image */}
+              <div className="relative w-full h-48 -mt-6">
+                <Image
+                  src={getCountryImage(selectedCountry.country)}
+                  alt={`${selectedCountry.country} landscape`}
+                  fill
+                  className="object-cover"
+                  sizes="100vw"
+                />
+              </div>
+
+              {/* Modal Header */}
+              <DialogHeader className="flex-shrink-0 px-6 py-4">
+                <DialogTitle className="text-2xl font-bold">
                   {formatCountryName(selectedCountry.country)}
                 </DialogTitle>
-                <DialogDescription>
-                  Full cost-of-living statistics for{" "}
-                  {formatCountryName(selectedCountry.country)}.
-                </DialogDescription>
               </DialogHeader>
-              {/* Scrollable content container */}
-              <div className="space-y-2 mt-4 h-[calc(80vh-150px)] overflow-y-auto pr-2">
-                <ul>
-                  {selectedCountry.items.map((item, index) => (
-                    <li key={index} className="flex justify-between">
-                      <span>
-                        {getEmoji(item.item)} {item.item}
-                      </span>
-                      <span>${item.price.toFixed(2)}</span>
-                    </li>
-                  ))}
-                </ul>
+
+              {/* Scrollable Content */}
+              <div className="flex-grow overflow-y-auto px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                  {optimizedCategoryOrder.map((category) => {
+                    const items = groupItemsByCategory(selectedCountry.items)[
+                      category
+                    ];
+                    if (!items) return null;
+
+                    return (
+                      <div key={category}>
+                        <h3 className="text-xl font-semibold mb-2 flex items-center">
+                          {items[0]?.emoji || "📦"} {category}
+                        </h3>
+                        <ul className="space-y-1">
+                          {items.map((item, index) => (
+                            <li key={index} className="flex justify-between">
+                              <span>{item.item}</span>
+                              <span>${item.price.toFixed(2)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <DialogFooter>
+
+              {/* Footer */}
+              <DialogFooter className="flex-shrink-0 px-6 py-4">
                 <Button onClick={() => setSelectedCountry(null)}>Close</Button>
               </DialogFooter>
             </>

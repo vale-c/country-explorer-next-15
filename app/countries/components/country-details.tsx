@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -82,17 +82,13 @@ export function CountryDetails({
         animate={{ opacity: 1, y: 0 }}
         className="relative h-[400px] rounded-xl overflow-hidden"
       >
-        <Suspense
-          fallback={<div className="bg-gray-300 h-[400px] rounded-xl" />}
-        >
-          <Image
-            src={countryImage || country.flags?.svg}
-            alt={`${country.name?.common ?? "Unknown"} landscape`}
-            fill
-            className="object-cover"
-            priority
-          />
-        </Suspense>
+        <Image
+          src={countryImage || country.flags?.svg}
+          alt={`${country.name?.common ?? "Unknown"} landscape`}
+          fill
+          className="object-cover"
+          priority
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 p-8">
           <h1 className="text-5xl font-bold text-white mb-2">
