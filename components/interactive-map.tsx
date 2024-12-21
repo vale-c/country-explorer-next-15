@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import {
   ComposableMap,
   Geographies,
   Geography,
   GeographyProps,
-} from 'react-simple-maps';
-import { motion } from 'framer-motion';
-import { useTheme } from 'next-themes';
+} from "react-simple-maps";
+import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const geoUrl =
-  'https://raw.githubusercontent.com/subyfly/topojson/master/world-countries.json';
+  "https://raw.githubusercontent.com/subyfly/topojson/master/world-countries.json";
 
 interface CustomGeographyProps extends GeographyProps {
   properties: {
@@ -32,7 +32,7 @@ export const InteractiveMap = () => {
     let centerLat = 30;
 
     // Adjust scale based on viewport width
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (window.innerWidth >= 1024) {
         // lg
         scale = 150;
@@ -69,27 +69,37 @@ export const InteractiveMap = () => {
                 style={{
                   default: {
                     fill:
-                      theme === 'dark' ? 'rgb(38 38 38)' : 'rgb(243 244 246)',
+                      theme === "dark" || theme === "system"
+                        ? "rgb(38 38 38)"
+                        : "rgb(220 220 220)",
                     stroke:
-                      theme === 'dark' ? 'rgb(23 23 23)' : 'rgb(229 231 235)',
+                      theme === "dark" || theme === "system"
+                        ? "rgb(23 23 23)"
+                        : "rgb(200 200 200)",
                     strokeWidth: 0.75,
-                    outline: 'none',
-                    cursor: 'pointer',
-                    transition: 'all 250ms',
+                    outline: "none",
+                    cursor: "pointer",
+                    transition: "all 250ms",
                   },
                   hover: {
-                    cursor: 'pointer',
+                    cursor: "pointer",
                     fill:
-                      theme === 'dark' ? 'rgb(59 130 246)' : 'rgb(37 99 235)',
+                      theme === "dark" || theme === "system"
+                        ? "rgb(59 130 246)"
+                        : "rgb(37 99 235)",
                     stroke:
-                      theme === 'dark' ? 'rgb(23 23 23)' : 'rgb(229 231 235)',
+                      theme === "dark" || theme === "system"
+                        ? "rgb(23 23 23)"
+                        : "rgb(200 200 200)",
                     strokeWidth: 0.75,
-                    outline: 'none',
+                    outline: "none",
                     zIndex: 1,
                   },
                   pressed: {
                     fill:
-                      theme === 'dark' ? 'rgb(29 78 216)' : 'rgb(30 64 175)',
+                      theme === "dark" || theme === "system"
+                        ? "rgb(29 78 216)"
+                        : "rgb(30 64 175)",
                   },
                 }}
               />

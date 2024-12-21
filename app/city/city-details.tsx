@@ -2,31 +2,16 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CityData } from "@/types/city";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet";
 import Link from "next/link";
 import { ArrowLeftIcon } from "@radix-ui/react-icons";
 import { buttonVariants } from "@/components/ui/button";
-
-const markerIcon = new L.Icon({
-  iconUrl: "/leaflet/images/marker-icon.png",
-  iconRetinaUrl: "/leaflet/images/marker-icon-2x.png",
-  shadowUrl: "/leaflet/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
 
 interface CityDetailsProps {
   cityDetails: CityData;
 }
 
 export function CityDetails({ cityDetails }: CityDetailsProps) {
-  const lat = parseFloat(cityDetails.lat);
-  const lon = parseFloat(cityDetails.lon);
-
   return (
     <div className="space-y-8">
       <Link
@@ -80,36 +65,6 @@ export function CityDetails({ cityDetails }: CityDetailsProps) {
           </CardContent>
         </Card>
       </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Map</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="w-full h-[400px] rounded-lg overflow-hidden">
-            <MapContainer
-              center={[lat, lon]}
-              zoom={13}
-              style={{ height: "400px", width: "100%" }}
-              scrollWheelZoom={false}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.de/{z}/{x}/{y}.png"
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              />
-              <Marker position={[lat, lon]} icon={markerIcon}>
-                <Popup>
-                  <div className="text-center">
-                    <h2 className="font-bold">
-                      {cityDetails.address.city || cityDetails.address.town}
-                    </h2>
-                    <p>{cityDetails.address.country}</p>
-                  </div>
-                </Popup>
-              </Marker>
-            </MapContainer>
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }

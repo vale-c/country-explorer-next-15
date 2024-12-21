@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useState, useEffect, Suspense } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect, Suspense } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Globe,
   Users,
@@ -13,12 +13,12 @@ import {
   Wifi,
   Mountain,
   Clock,
-} from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Country, QualityOfLife } from '@/types/country';
-import { CitySearch } from '../city/city-search';
-import { decimalFormatter, FormattedNumber } from '@/lib/utils/formatters';
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Country, QualityOfLife } from "@/types/country";
+import { CitySearch } from "../../city/city-search";
+import { decimalFormatter, FormattedNumber } from "@/lib/utils/formatters";
 
 interface CountryDetailsProps {
   country: Country;
@@ -35,13 +35,13 @@ export function CountryDetails({
   qualityOfLife,
   countryImage,
 }: CountryDetailsProps) {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
   const [internetSpeed, setInternetSpeed] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchInternetSpeeds = async () => {
       try {
-        const response = await fetch('/internet_speeds.json');
+        const response = await fetch("/internet_speeds.json");
         if (!response.ok) {
           console.error(
             `Error fetching internet speeds: ${response.statusText}`
@@ -87,7 +87,7 @@ export function CountryDetails({
         >
           <Image
             src={countryImage || country.flags?.svg}
-            alt={`${country.name?.common ?? 'Unknown'} landscape`}
+            alt={`${country.name?.common ?? "Unknown"} landscape`}
             fill
             className="object-cover"
             priority
@@ -96,10 +96,10 @@ export function CountryDetails({
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-0 left-0 p-8">
           <h1 className="text-5xl font-bold text-white mb-2">
-            {country.name?.common ?? 'Unknown'}
+            {country.name?.common ?? "Unknown"}
           </h1>
           <p className="text-white/80 text-xl">
-            {country.name?.official ?? 'Unknown'}
+            {country.name?.official ?? "Unknown"}
           </p>
         </div>
       </motion.header>
@@ -176,8 +176,8 @@ export function CountryDetails({
                             Region
                           </p>
                           <p className="font-medium">
-                            {country.region ?? 'Unknown'} (
-                            {country.subregion ?? 'Unknown'})
+                            {country.region ?? "Unknown"} (
+                            {country.subregion ?? "Unknown"})
                           </p>
                         </div>
                         <div>
@@ -185,7 +185,7 @@ export function CountryDetails({
                             Capital
                           </p>
                           <p className="font-medium">
-                            {country.capital?.[0] ?? 'N/A'}
+                            {country.capital?.[0] ?? "N/A"}
                           </p>
                         </div>
                       </CardContent>
@@ -245,7 +245,7 @@ export function CountryDetails({
                             maximumFractionDigits={2}
                             minimumFractionDigits={2}
                           />
-                          °N,{' '}
+                          °N,{" "}
                           <FormattedNumber
                             value={country.latlng?.[1] ?? 0}
                             maximumFractionDigits={2}
@@ -260,8 +260,8 @@ export function CountryDetails({
                         </p>
                         <p className="font-medium">
                           {country.landlocked
-                            ? 'This country is landlocked'
-                            : 'This country has access to the sea'}
+                            ? "This country is landlocked"
+                            : "This country has access to the sea"}
                         </p>
                       </div>
                     </CardContent>
@@ -324,7 +324,7 @@ export function CountryDetails({
                             Internet Speed
                           </p>
                           <p className="text-lg font-bold">
-                            {internetSpeed ? `${internetSpeed} Mbps` : 'N/A'}
+                            {internetSpeed ? `${internetSpeed} Mbps` : "N/A"}
                           </p>
                         </div>
                       </div>
@@ -337,7 +337,7 @@ export function CountryDetails({
                           <p className="text-lg font-bold">
                             <FormattedNumber
                               value={qualityOfLife.lifeExpectancy}
-                            />{' '}
+                            />{" "}
                             years
                           </p>
                         </div>
@@ -366,8 +366,8 @@ export function CountryDetails({
             <CardContent className="space-y-4">
               <div className="flex items-center">
                 <Image
-                  src={country.flags?.svg ?? '/default-flag.svg'}
-                  alt={`${country.name?.common ?? 'Unknown'} flag`}
+                  src={country.flags?.svg ?? "/default-flag.svg"}
+                  alt={`${country.name?.common ?? "Unknown"} flag`}
                   width={40}
                   height={30}
                   className="mr-2"
@@ -377,13 +377,13 @@ export function CountryDetails({
               <div>
                 <p className="text-sm text-muted-foreground">Driving Side</p>
                 <p className="font-medium capitalize">
-                  {country.car?.side ?? 'N/A'}
+                  {country.car?.side ?? "N/A"}
                 </p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Country Code</p>
                 <p className="font-medium">
-                  {country.cca2 ?? 'N/A'} / {country.cca3 ?? 'N/A'}
+                  {country.cca2 ?? "N/A"} / {country.cca3 ?? "N/A"}
                 </p>
               </div>
               {country.tld && (

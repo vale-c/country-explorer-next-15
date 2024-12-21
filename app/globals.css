@@ -71,3 +71,21 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .glow {
+    box-shadow: 0 0 10px theme('colors.primary.DEFAULT'),
+                0 0 20px theme('colors.primary.DEFAULT');
+  }
+  
+  .glow-hover:hover {
+    box-shadow: 0 0 15px theme('colors.primary.DEFAULT'),
+                0 0 30px theme('colors.primary.DEFAULT');
+  }
+
+  .neon-border {
+    box-shadow: 0 0 5px theme('colors.primary.DEFAULT'),
+                inset 0 0 5px theme('colors.primary.DEFAULT');
+    border: 1px solid theme('colors.primary.DEFAULT');
+  }
+}
