@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 
@@ -24,31 +23,20 @@ export function Navbar() {
           <div className="hidden md:block">
             <div className="ml-10 flex items-baseline space-x-4">
               <Link
-                href="/destinations"
+                href="/countries"
                 className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Destinations
+                Countries
               </Link>
               <Link
-                href="/salaries"
+                href="/cost-of-living"
                 className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Salaries
-              </Link>
-              <Link
-                href="/community"
-                className="text-gray-500 hover:text-gray-700 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Community
+                Cost of Living
               </Link>
             </div>
           </div>
-          <div className="hidden md:block">
-            <div className="ml-4 flex items-center md:ml-6">
-              <Button className="mx-4 glow-hover">Sign In</Button>
-              <ModeToggle />
-            </div>
-          </div>
+
           <div className="-mr-2 flex md:hidden">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -88,9 +76,6 @@ export function Navbar() {
             </Link>
           </div>
           <div className="pt-4 pb-3 border-t border-gray-700">
-            <div className="my-3 px-4">
-              <Button className="w-full glow-hover">Sign In</Button>
-            </div>
             <div className="px-4">
               <ModeToggle />
             </div>
