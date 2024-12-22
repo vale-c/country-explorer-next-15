@@ -24,7 +24,7 @@ export async function fetchPaginatedGroupedData(
   // Ensure `price` is a number
   const parsedData = rawData.map((row) => ({
     ...row,
-    price: parseFloat(row.price as string),
+    price: Number(row.price), // Convert `price` from string to number
   }));
 
   // Group data by country

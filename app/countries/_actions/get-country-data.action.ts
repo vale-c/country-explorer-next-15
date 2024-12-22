@@ -1,9 +1,11 @@
-'use server';
+"use server";
 
-import { QualityOfLife } from '@/types/country';
-import { Country } from '@/types/country';
+import { QualityOfLife } from "@/types/country";
+import { Country } from "@/types/country";
 
-const RESTCOUNTRIES_BASE_URL = 'https://restcountries.com/v3.1';
+const RESTCOUNTRIES_BASE_URL = "https://restcountries.com/v3.1";
+const WORLD_BANK_API_URL = "https://api.worldbank.org/v2";
+const YEAR_RANGE = "2012:2022";
 
 interface WorldBankIndicatorResponse {
   indicator: { id: string; value: string };
@@ -25,17 +27,14 @@ interface WorldBankResponse {
   lastupdated: string;
 }
 
-const WORLD_BANK_API_URL = 'https://api.worldbank.org/v2';
-const YEAR_RANGE = '2012:2022';
-
 const INDICATORS = {
-  pppGdpPerCapita: 'NY.GDP.PCAP.PP.CD',
-  lifeExpectancy: 'SP.DYN.LE00.IN',
-  educationExpenditure: 'SE.XPD.TOTL.GD.ZS',
-  healthExpenditure: 'SH.XPD.CHEX.GD.ZS',
-  fixedBroadband: 'IT.NET.BBND',
-  mobileBroadband: 'IT.NET.MOBZ',
-  internetUsers: 'IT.NET.USER.ZS',
+  pppGdpPerCapita: "NY.GDP.PCAP.PP.CD",
+  lifeExpectancy: "SP.DYN.LE00.IN",
+  educationExpenditure: "SE.XPD.TOTL.GD.ZS",
+  healthExpenditure: "SH.XPD.CHEX.GD.ZS",
+  fixedBroadband: "IT.NET.BBND",
+  mobileBroadband: "IT.NET.MOBZ",
+  internetUsers: "IT.NET.USER.ZS",
 };
 
 export async function getCountries() {
@@ -43,10 +42,10 @@ export async function getCountries() {
     const response = await fetch(
       `${RESTCOUNTRIES_BASE_URL}/all?fields=name,cca3,flags,capital,region,population,translations`,
       {
-        cache: 'force-cache',
+        cache: "force-cache",
         next: {
           revalidate: 604800,
-          tags: ['countries'],
+          tags: ["countries"],
         },
       }
     );
@@ -66,7 +65,7 @@ export async function getCountries() {
         a.name.common.localeCompare(b.name.common)
       );
   } catch (error) {
-    console.error('Error fetching countries:', error);
+    console.error("Error fetching countries:", error);
     return [];
   }
 }
@@ -149,10 +148,10 @@ export async function searchCountries(query: string) {
     const response = await fetch(
       `${RESTCOUNTRIES_BASE_URL}/name/${encodeURIComponent(query)}`
     );
-    if (!response.ok) throw new Error('Failed to search countries');
+    if (!response.ok) throw new Error("Failed to search countries");
     return await response.json();
   } catch (error) {
-    console.error('Error searching countries:', error);
+    console.error("Error searching countries:", error);
     return [];
   }
 }
