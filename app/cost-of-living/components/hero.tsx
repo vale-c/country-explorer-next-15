@@ -42,26 +42,35 @@ export default function Hero({
       <section className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            Global Rent Avg
+            🏢 Average City Rent
           </h2>
           <p className="text-2xl font-bold text-blue-500">
             ${stats.averageRentCityCenter}
           </p>
-        </div>
-        <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            Internet Cost
-          </h2>
-          <p className="text-2xl font-bold text-green-500">
-            ${stats.averageInternetSpeed}
+          <p className="text-sm text-gray-500">
+            Global monthly average for 1BR apartment
           </p>
         </div>
         <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
           <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            Coffee Index
+            🌐 High-Speed Internet
+          </h2>
+          <p className="text-2xl font-bold text-green-500">
+            ${stats.averageInternetSpeed}
+          </p>
+          <p className="text-sm text-gray-500">
+            60+ Mbps unlimited data, monthly
+          </p>
+        </div>
+        <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
+          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+            ☕️ Coffee Price Index
           </h2>
           <p className="text-2xl font-bold text-yellow-500">
             ${stats.averageCoffeePrice}
+          </p>
+          <p className="text-sm text-gray-500">
+            Average price for cappuccino worldwide
           </p>
         </div>
       </section>
