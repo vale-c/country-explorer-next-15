@@ -26,11 +26,10 @@ export default async function CostOfLivingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
+  const page = parseInt((await searchParams).page || '1', 10);
+
   const [{ data, totalRows }, stats] = await Promise.all([
-    fetchPaginatedGroupedData(
-      parseInt((await searchParams).page || '1', 10),
-      6
-    ),
+    fetchPaginatedGroupedData(page, 6),
     getGlobalStatistics(),
   ]);
 
@@ -52,7 +51,7 @@ export default async function CostOfLivingPage({
     >
       <CountryCardList
         initialData={data}
-        currentPage={parseInt((await searchParams).page || '1', 10)}
+        currentPage={page}
         totalPages={Math.ceil(totalRows / 6)}
         rowsPerPage={6}
         imageMap={imageMap}

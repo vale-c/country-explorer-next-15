@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Hero from './hero';
@@ -63,9 +63,13 @@ export default function CountryCardList({
     items: { item: string; price: number }[];
   }>(null);
 
-  const handlePageChange = (page: number) => {
+  useEffect(() => {
+    setData(initialData);
+  }, [initialData]);
+
+  const handlePageChange = async (page: number) => {
     if (page > 0 && page <= totalPages) {
-      router.push(`/cost-of-living?page=${page}`, {
+      await router.push(`/cost-of-living?page=${page}`, {
         scroll: false,
       });
     }
