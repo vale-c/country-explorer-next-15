@@ -16,28 +16,23 @@ export function CountryImage({
 }: CountryImageProps) {
   const [error, setError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
-  const [imageSrc, setImageSrc] = useState(src);
 
   const showLoadingState = isLoading || imageLoading;
-
-  const handleError = () => {
-    console.error(`Failed to load image: ${src}`);
-    setError(true);
-    setImageLoading(false);
-    setImageSrc('/images/placeholder.jpg');
-  };
 
   return (
     <div className="relative w-full h-40 rounded-t-lg overflow-hidden bg-gray-200">
       <Image
-        src={error ? '/images/placeholder.jpg' : imageSrc}
+        src={src}
         alt={alt}
         fill
         className={`object-cover transition-opacity duration-300 ${
           showLoadingState ? 'opacity-0' : 'opacity-100'
         }`}
         onLoad={() => setImageLoading(false)}
-        onError={handleError}
+        onError={() => {
+          setError(true);
+          setImageLoading(false);
+        }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         priority={true}
       />

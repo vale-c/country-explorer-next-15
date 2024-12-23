@@ -7,13 +7,16 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'flagcdn.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'upload.wikimedia.org',
+      },
     ],
     minimumCacheTTL: 3600,
-  },
-  experimental: {
-    serverActions: {
-      allowedOrigins: ['localhost:3000', 'country-explorer-next-15.vercel.app'],
-    },
   },
 };
 
