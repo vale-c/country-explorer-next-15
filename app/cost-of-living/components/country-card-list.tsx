@@ -1,23 +1,25 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Hero from "./hero";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Hero from './hero';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+  DialogDescription,
+} from '@/components/ui/dialog';
 import {
   groupItemsByCategory,
   getPriorityItems,
   formatCountryName,
-} from "../utils";
+} from '../utils';
+import { CountryImage } from './country-image';
 
 interface CountryCardListProps {
   initialData: [string, { item: string; price: number }[]][];
@@ -34,6 +36,7 @@ interface CountryCardListProps {
       }[]
     ][]
   >;
+  stats: GlobalStats;
 }
 
 export default function CountryCardList({
@@ -42,6 +45,7 @@ export default function CountryCardList({
   totalPages,
   imageMap,
   searchCountry,
+  stats,
 }: CountryCardListProps) {
   const router = useRouter();
   const [data, setData] = useState(initialData);
@@ -60,7 +64,7 @@ export default function CountryCardList({
   const handleSearchQuery = async (
     query: string
   ): Promise<[string, { item: string; price: number }[]][]> => {
-    if (query.trim() === "") {
+    if (query.trim() === '') {
       setData(initialData); // Reset to initial data when query is cleared
       setIsSearchActive(false); // Disable search mode
       return initialData; // Return initial data
@@ -73,38 +77,33 @@ export default function CountryCardList({
   };
 
   const getCountryImage = (country: string): string =>
-    imageMap[country] || "/images/placeholder.jpg";
+    imageMap[country] || '/images/placeholder.jpg';
 
   const optimizedCategoryOrder = [
-    "Housing",
-    "Food & Drinks",
-    "Transportation",
-    "Utilities",
-    "Entertainment & Fitness",
-    "Other Costs",
+    'Housing',
+    'Food & Drinks',
+    'Transportation',
+    'Utilities',
+    'Entertainment & Fitness',
+    'Other Costs',
   ];
 
   return (
     <>
-      <Hero searchCountry={handleSearchQuery} />
+      <Hero searchCountry={handleSearchQuery} stats={stats} />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.map(([country, items], index) => {
           const priorityItems = getPriorityItems(items);
           return (
             <Card
-              key={index}
+              key={country}
               className="flex flex-col h-full shadow-lg hover:shadow-2xl transition-shadow duration-200 cursor-zoom-in"
               onClick={() => setSelectedCountry({ country, items })}
             >
-              <div className="relative w-full h-40 rounded-t-lg overflow-hidden">
-                <Image
-                  src={getCountryImage(country)}
-                  alt={`${country} landscape`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                />
-              </div>
+              <CountryImage
+                src={getCountryImage(country)}
+                alt={`${country} landscape`}
+              />
               <CardHeader>
                 <CardTitle className="mt-4 text-center text-xl font-semibold">
                   {formatCountryName(country)}
@@ -172,6 +171,10 @@ export default function CountryCardList({
                 <DialogTitle className="text-2xl font-bold">
                   {formatCountryName(selectedCountry.country)}
                 </DialogTitle>
+                <DialogDescription>
+                  Cost of living details for{' '}
+                  {formatCountryName(selectedCountry.country)}
+                </DialogDescription>
               </DialogHeader>
 
               <div className="flex-grow overflow-y-auto px-6">
@@ -185,7 +188,7 @@ export default function CountryCardList({
                     return (
                       <div key={category}>
                         <h3 className="text-xl font-semibold mb-2 flex items-center">
-                          {items[0]?.emoji || "📦"} {category}
+                          {items[0]?.emoji || '📦'} {category}
                         </h3>
                         <ul className="space-y-1">
                           {items.map((item, index) => (
