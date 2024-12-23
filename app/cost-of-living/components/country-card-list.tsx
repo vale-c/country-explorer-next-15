@@ -36,7 +36,12 @@ interface CountryCardListProps {
       }[]
     ][]
   >;
-  stats: GlobalStats;
+  stats: {
+    averageRentCityCenter: number;
+    averageInternetSpeed: number;
+    averageCoffeePrice: number;
+    totalCountries: number;
+  };
 }
 
 export default function CountryCardList({
