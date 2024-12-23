@@ -30,6 +30,7 @@ export function CountryImage({
         }`}
         onLoad={() => setImageLoading(false)}
         onError={() => {
+          console.log('Error is: ', error);
           setError(true);
           setImageLoading(false);
         }}
