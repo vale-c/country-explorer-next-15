@@ -4,15 +4,22 @@ import { unstable_cache } from 'next/cache';
 
 const FALLBACK_IMAGES: Record<string, string> = {
   default: '/images/placeholder.jpg',
-  // Add some default images for common countries if needed
-  // 'United States': '/images/countries/usa.jpg',
 };
+
+// In-memory cache for development
+const imageCache = new Map<string, { url: string; timestamp: number }>();
+const CACHE_DURATION = 3600000; // 1 hour in milliseconds
 
 export async function getCountryImage(countryName: string) {
   return unstable_cache(
     async () => {
+      // Check memory cache first
+      const cached = imageCache.get(countryName);
+      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+        return cached.url;
+      }
+
       if (!process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY) {
-        console.error('Missing Unsplash API key');
         return FALLBACK_IMAGES.default;
       }
 
@@ -26,52 +33,35 @@ export async function getCountryImage(countryName: string) {
               Authorization: `Client-ID ${process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY}`,
               'Accept-Version': 'v1',
             },
-            next: {
-              revalidate: 86400, // 24 hours
-              tags: [`country-image-${countryName}`],
-            },
+            cache: 'force-cache',
           }
         );
 
-        // Handle rate limiting
-        const remaining = response.headers.get('X-Ratelimit-Remaining');
-        if (remaining && parseInt(remaining) < 10) {
-          console.warn(
-            `Unsplash API rate limit warning: ${remaining} requests remaining`
-          );
-        }
-
-        if (response.status === 403) {
-          console.error(
-            'Unsplash API authorization failed - check your API key'
-          );
-          return FALLBACK_IMAGES.default;
-        }
-
         if (!response.ok) {
-          console.error(
-            `Failed to fetch image for ${countryName}: ${response.status} ${response.statusText}`
-          );
-          return FALLBACK_IMAGES[countryName] || FALLBACK_IMAGES.default;
+          return FALLBACK_IMAGES.default;
         }
 
         const data = await response.json();
         const imageUrl = data.results?.[0]?.urls?.regular;
 
-        if (!imageUrl) {
-          console.warn(`No image found for ${countryName}`);
-          return FALLBACK_IMAGES[countryName] || FALLBACK_IMAGES.default;
+        if (imageUrl) {
+          // Update memory cache
+          imageCache.set(countryName, {
+            url: imageUrl,
+            timestamp: Date.now(),
+          });
+          return imageUrl;
         }
 
-        return imageUrl;
+        return FALLBACK_IMAGES.default;
       } catch (error) {
         console.error(`Error fetching image for ${countryName}:`, error);
-        return FALLBACK_IMAGES[countryName] || FALLBACK_IMAGES.default;
+        return FALLBACK_IMAGES.default;
       }
     },
     [`country-image-${countryName}`],
     {
-      revalidate: 86400,
+      revalidate: 3600, // 1 hour
       tags: [`country-image-${countryName}`],
     }
   )();
