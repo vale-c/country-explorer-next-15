@@ -6,20 +6,13 @@ const FALLBACK_IMAGES: Record<string, string> = {
   default: '/images/placeholder.jpg',
 };
 
-// In-memory cache for development
-const imageCache = new Map<string, { url: string; timestamp: number }>();
-const CACHE_DURATION = 3600000; // 1 hour in milliseconds
-
 export async function getCountryImage(countryName: string) {
+  const cacheKey = `country-image-${countryName}`;
+
   return unstable_cache(
     async () => {
-      // Check memory cache first
-      const cached = imageCache.get(countryName);
-      if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-        return cached.url;
-      }
-
       if (!process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY) {
+        console.error('Missing Unsplash API key');
         return FALLBACK_IMAGES.default;
       }
 
@@ -34,35 +27,40 @@ export async function getCountryImage(countryName: string) {
               'Accept-Version': 'v1',
             },
             cache: 'force-cache',
+            next: {
+              revalidate: 3600, // 1 hour
+              tags: [cacheKey],
+            },
           }
         );
 
         if (!response.ok) {
-          return FALLBACK_IMAGES.default;
+          throw new Error(`Failed to fetch image: ${response.statusText}`);
         }
 
         const data = await response.json();
         const imageUrl = data.results?.[0]?.urls?.regular;
 
-        if (imageUrl) {
-          // Update memory cache
-          imageCache.set(countryName, {
-            url: imageUrl,
-            timestamp: Date.now(),
-          });
-          return imageUrl;
+        if (!imageUrl) {
+          throw new Error('No image found');
         }
 
-        return FALLBACK_IMAGES.default;
+        // Cache the actual image too
+        await fetch(imageUrl, {
+          cache: 'force-cache',
+          next: { revalidate: 3600 },
+        });
+
+        return imageUrl;
       } catch (error) {
         console.error(`Error fetching image for ${countryName}:`, error);
         return FALLBACK_IMAGES.default;
       }
     },
-    [`country-image-${countryName}`],
+    [cacheKey],
     {
-      revalidate: 3600, // 1 hour
-      tags: [`country-image-${countryName}`],
+      revalidate: 3600,
+      tags: [cacheKey],
     }
   )();
 }

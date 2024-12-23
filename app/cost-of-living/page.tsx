@@ -5,6 +5,17 @@ import { getCountryImage } from '@/app/countries/_actions/get-country-image.acti
 import { searchCountry } from './_actions/search-country.action';
 import { getGlobalStatistics } from './_actions/get-global-statistics.action';
 
+async function getCountryImages(countries: string[]) {
+  const imageMap: Record<string, string> = {};
+  await Promise.all(
+    countries.map(async (country) => {
+      const image = await getCountryImage(country);
+      imageMap[country] = image;
+    })
+  );
+  return imageMap;
+}
+
 export default async function CostOfLivingPage({
   searchParams,
 }: {
@@ -17,15 +28,8 @@ export default async function CostOfLivingPage({
     getGlobalStatistics(),
   ]);
 
-  // Fetch images in parallel
   const countries = data.map(([country]) => country);
-  const imagePromises = countries.map(async (country) => {
-    const image = await getCountryImage(country);
-    return [country, image] as [string, string];
-  });
-
-  const imageEntries = await Promise.all(imagePromises);
-  const imageMap = Object.fromEntries(imageEntries);
+  const imageMap = await getCountryImages(countries);
 
   return (
     <Suspense
