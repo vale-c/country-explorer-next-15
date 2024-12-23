@@ -6,11 +6,18 @@ import { useState } from 'react';
 interface CountryImageProps {
   src: string;
   alt: string;
+  isLoading?: boolean;
 }
 
-export function CountryImage({ src, alt }: CountryImageProps) {
-  const [isLoading, setIsLoading] = useState(true);
+export function CountryImage({
+  src,
+  alt,
+  isLoading = false,
+}: CountryImageProps) {
   const [error, setError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  const showLoadingState = isLoading || imageLoading;
 
   return (
     <div className="relative w-full h-40 rounded-t-lg overflow-hidden bg-gray-200">
@@ -19,17 +26,17 @@ export function CountryImage({ src, alt }: CountryImageProps) {
         alt={alt}
         fill
         className={`object-cover transition-opacity duration-300 ${
-          isLoading ? 'opacity-0' : 'opacity-100'
+          showLoadingState ? 'opacity-0' : 'opacity-100'
         }`}
-        onLoad={() => setIsLoading(false)}
+        onLoad={() => setImageLoading(false)}
         onError={() => {
           setError(true);
-          setIsLoading(false);
+          setImageLoading(false);
         }}
         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         priority={true}
       />
-      {isLoading && (
+      {showLoadingState && (
         <div className="absolute inset-0 bg-gray-200 animate-pulse" />
       )}
     </div>

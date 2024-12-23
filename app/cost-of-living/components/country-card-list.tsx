@@ -20,13 +20,14 @@ import {
   formatCountryName,
 } from '../utils';
 import { CountryImage } from './country-image';
+import { useCountryImages } from '../hooks/use-country-images';
 
 interface CountryCardListProps {
   initialData: [string, { item: string; price: number }[]][];
   currentPage: number;
   totalPages: number;
   rowsPerPage?: number;
-  imageMap: Record<string, string | null>;
+  imageMap: Record<string, string>;
   searchCountry: (query: string) => Promise<
     [
       string,
@@ -55,6 +56,8 @@ export default function CountryCardList({
   const router = useRouter();
   const [data, setData] = useState(initialData);
   const [isSearchActive, setIsSearchActive] = useState(false);
+  const countries = data.map(([country]) => country);
+  const { images, isLoading } = useCountryImages(countries, imageMap);
   const [selectedCountry, setSelectedCountry] = useState<null | {
     country: string;
     items: { item: string; price: number }[];
@@ -62,7 +65,9 @@ export default function CountryCardList({
 
   const handlePageChange = (page: number) => {
     if (page > 0 && page <= totalPages) {
-      router.push(`/cost-of-living?page=${page}`);
+      router.push(`/cost-of-living?page=${page}`, {
+        scroll: false,
+      });
     }
   };
 
@@ -82,7 +87,7 @@ export default function CountryCardList({
   };
 
   const getCountryImage = (country: string): string =>
-    imageMap[country] || '/images/placeholder.jpg';
+    images[country] || '/images/placeholder.jpg';
 
   const optimizedCategoryOrder = [
     'Housing',
@@ -108,6 +113,7 @@ export default function CountryCardList({
               <CountryImage
                 src={getCountryImage(country)}
                 alt={`${country} landscape`}
+                isLoading={isLoading}
               />
               <CardHeader>
                 <CardTitle className="mt-4 text-center text-xl font-semibold">

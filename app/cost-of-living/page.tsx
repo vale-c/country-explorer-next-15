@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { fetchPaginatedGroupedData } from '@/lib/db/fetch-paginated-data';
 import CountryCardList from './components/country-card-list';
 import { getCountryImage } from '@/app/countries/_actions/get-country-image.action';
@@ -37,14 +38,27 @@ export default async function CostOfLivingPage({
   const imageMap = await getCountryImages(countries);
 
   return (
-    <CountryCardList
-      initialData={data}
-      currentPage={parseInt((await searchParams).page || '1', 10)}
-      totalPages={Math.ceil(totalRows / 6)}
-      rowsPerPage={6}
-      imageMap={imageMap}
-      searchCountry={searchCountry}
-      stats={stats}
-    />
+    <Suspense
+      fallback={
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-[400px] bg-gray-200 animate-pulse rounded-lg"
+            />
+          ))}
+        </div>
+      }
+    >
+      <CountryCardList
+        initialData={data}
+        currentPage={parseInt((await searchParams).page || '1', 10)}
+        totalPages={Math.ceil(totalRows / 6)}
+        rowsPerPage={6}
+        imageMap={imageMap}
+        searchCountry={searchCountry}
+        stats={stats}
+      />
+    </Suspense>
   );
 }
