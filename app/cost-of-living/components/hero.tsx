@@ -1,4 +1,5 @@
 'use client';
+import { BackgroundGradient } from '@/components/ui/background-gradient';
 import { Input } from '@/components/ui/input';
 
 interface GlobalStats {
@@ -39,40 +40,48 @@ export default function Hero({
       </section>
 
       {/* Global Metrics Section */}
-      <section className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            🏢 Average City Rent
-          </h2>
-          <p className="text-2xl font-bold text-blue-500">
-            ${stats.averageRentCityCenter}
-          </p>
-          <p className="text-sm text-gray-500">
-            Global monthly average for 1BR apartment
-          </p>
-        </div>
-        <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            🌐 High-Speed Internet
-          </h2>
-          <p className="text-2xl font-bold text-green-500">
-            ${stats.averageInternetSpeed}
-          </p>
-          <p className="text-sm text-gray-500">
-            60+ Mbps unlimited data, monthly
-          </p>
-        </div>
-        <div className="bg-white dark:bg-black shadow-lg rounded-lg p-4 text-center">
-          <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-            ☕️ Coffee Price Index
-          </h2>
-          <p className="text-2xl font-bold text-yellow-500">
-            ${stats.averageCoffeePrice}
-          </p>
-          <p className="text-sm text-gray-500">
-            Average price for cappuccino worldwide
-          </p>
-        </div>
+      <section className="grid grid-cols-3 gap-4 w-full mb-16">
+        <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
+          <div className="space-y-2 text-center">
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              🏢 Average City Rent
+            </h2>
+            <p className="text-2xl font-bold text-blue-500">
+              ${stats.averageRentCityCenter}
+            </p>
+            <p className="text-sm text-gray-500">
+              Global monthly average for 1BR apartment
+            </p>
+          </div>
+        </BackgroundGradient>
+
+        <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
+          <div className="space-y-2 text-center">
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              🌐 High-Speed Internet
+            </h2>
+            <p className="text-2xl font-bold text-green-500">
+              ${stats.averageInternetSpeed}
+            </p>
+            <p className="text-sm text-gray-500">
+              60+ Mbps unlimited data, monthly
+            </p>
+          </div>
+        </BackgroundGradient>
+
+        <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
+          <div className="space-y-2 text-center">
+            <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
+              ☕️ Coffee Price Index
+            </h2>
+            <p className="text-2xl font-bold text-yellow-500">
+              ${stats.averageCoffeePrice}
+            </p>
+            <p className="text-sm text-gray-500">
+              Average price for cappuccino worldwide
+            </p>
+          </div>
+        </BackgroundGradient>
       </section>
 
       {/* Country Cards Section */}
