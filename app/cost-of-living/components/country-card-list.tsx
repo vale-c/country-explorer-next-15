@@ -11,7 +11,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
   DialogDescription,
 } from '@/components/ui/dialog';
 import {
@@ -21,6 +20,9 @@ import {
 } from '../utils';
 import { CountryImage } from './country-image';
 import { useCountryImages } from '../hooks/use-country-images';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface CountryCardListProps {
   initialData: [string, { item: string; price: number }[]][];
@@ -44,6 +46,57 @@ interface CountryCardListProps {
     totalCountries: number;
   };
 }
+
+const CategoryItems = ({
+  items,
+}: {
+  items: { emoji: string; item: string; price: number }[];
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const ITEMS_TO_SHOW = 4;
+  const hasMoreItems = items.length > ITEMS_TO_SHOW;
+  const displayedItems = isExpanded ? items : items.slice(0, ITEMS_TO_SHOW);
+
+  return (
+    <div className="p-4 space-y-2">
+      {displayedItems.map((item, index) => (
+        <div key={index} className="flex items-center justify-between py-2">
+          <span className="text-sm text-muted-foreground flex items-center gap-2">
+            <span className="text-base" role="img" aria-label={item.item}>
+              {item.emoji}
+            </span>
+            {item.item}
+          </span>
+          <Badge variant="secondary" className="font-mono">
+            ${item.price.toFixed(2)}
+          </Badge>
+        </div>
+      ))}
+
+      {hasMoreItems && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="w-full mt-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <span className="flex items-center gap-2">
+            {isExpanded ? (
+              <>
+                Show Less <ChevronUp className="h-4 w-4" />
+              </>
+            ) : (
+              <>
+                Show {items.length - ITEMS_TO_SHOW} More{' '}
+                <ChevronDown className="h-4 w-4" />
+              </>
+            )}
+          </span>
+        </Button>
+      )}
+    </div>
+  );
+};
 
 export default function CountryCardList({
   initialData,
@@ -92,15 +145,6 @@ export default function CountryCardList({
 
   const getCountryImage = (country: string): string =>
     images[country] || '/images/placeholder.jpg';
-
-  const optimizedCategoryOrder = [
-    'Housing',
-    'Food & Drinks',
-    'Transportation',
-    'Utilities',
-    'Entertainment & Fitness',
-    'Other Costs',
-  ];
 
   return (
     <>
@@ -172,7 +216,8 @@ export default function CountryCardList({
         <DialogContent className="max-w-4xl w-full h-[90vh] overflow-hidden p-0">
           {selectedCountry && (
             <>
-              <div className="relative w-full h-48 -mt-6">
+              {/* Hero Image Section */}
+              <div className="relative w-full h-48">
                 <Image
                   src={getCountryImage(selectedCountry.country)}
                   alt={`${selectedCountry.country} landscape`}
@@ -180,48 +225,67 @@ export default function CountryCardList({
                   className="object-cover"
                   sizes="100vw"
                 />
-              </div>
-
-              <DialogHeader className="flex-shrink-0 px-6 py-4">
-                <DialogTitle className="text-2xl font-bold">
-                  {formatCountryName(selectedCountry.country)}
-                </DialogTitle>
-                <DialogDescription>
-                  Cost of living details for{' '}
-                  {formatCountryName(selectedCountry.country)}
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="flex-grow overflow-y-auto px-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  {optimizedCategoryOrder.map((category) => {
-                    const items = groupItemsByCategory(selectedCountry.items)[
-                      category
-                    ];
-                    if (!items) return null;
-
-                    return (
-                      <div key={category}>
-                        <h3 className="text-xl font-semibold mb-2 flex items-center">
-                          {items[0]?.emoji || '📦'} {category}
-                        </h3>
-                        <ul className="space-y-1">
-                          {items.map((item, index) => (
-                            <li key={index} className="flex justify-between">
-                              <span>{item.item}</span>
-                              <span>${item.price.toFixed(2)}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    );
-                  })}
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 to-background/20" />
+                <div className="absolute bottom-6 left-6">
+                  <h2 className="text-3xl font-bold text-white">
+                    {formatCountryName(selectedCountry.country)}
+                  </h2>
                 </div>
               </div>
 
-              <DialogFooter className="flex-shrink-0 px-6 py-4">
-                <Button onClick={() => setSelectedCountry(null)}>Close</Button>
-              </DialogFooter>
+              {/* Main Content */}
+              <div className="flex flex-col h-[calc(90vh-12rem)]">
+                <DialogHeader className="px-6 py-4 border-b">
+                  <DialogTitle>Cost of Living Details</DialogTitle>
+                  <DialogDescription>
+                    Explore detailed costs in{' '}
+                    {formatCountryName(selectedCountry.country)}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <ScrollArea className="flex-1">
+                  <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                    {Object.entries(groupItemsByCategory(selectedCountry.items))
+                      .sort((a, b) => {
+                        const order = [
+                          'Rent Per Month',
+                          'Utilities (Monthly)',
+                          'Markets',
+                          'Restaurants',
+                          'Transportation',
+                          'Sports And Leisure',
+                          'Clothing And Shoes',
+                          'Childcare',
+                          'Salaries And Financing',
+                          'Other',
+                        ];
+                        return order.indexOf(a[0]) - order.indexOf(b[0]);
+                      })
+                      .map(([category, items]) => (
+                        <div
+                          key={category}
+                          className="bg-card rounded-lg border shadow-sm"
+                        >
+                          <div className="p-4 border-b bg-muted/50">
+                            <div className="flex items-center gap-2">
+                              <span
+                                className="text-2xl"
+                                role="img"
+                                aria-label={category}
+                              >
+                                {items[0]?.emoji}
+                              </span>
+                              <h3 className="text-lg font-semibold">
+                                {category}
+                              </h3>
+                            </div>
+                          </div>
+                          <CategoryItems items={items} />
+                        </div>
+                      ))}
+                  </div>
+                </ScrollArea>
+              </div>
             </>
           )}
         </DialogContent>
