@@ -1,28 +1,29 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import Hero from './hero';
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Hero from "./hero";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   groupItemsByCategory,
   getPriorityItems,
   formatCountryName,
-} from '../utils';
-import { CountryImage } from './country-image';
-import { useCountryImages } from '../hooks/use-country-images';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+} from "../utils";
+import { CountryImage } from "./country-image";
+import { useCountryImages } from "../hooks/use-country-images";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Badge } from "@/components/ui/badge";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { useDebounce } from "@/lib/utils/hooks/useDebounce";
 
 interface CountryCardListProps {
   initialData: [string, { item: string; price: number }[]][];
@@ -47,7 +48,7 @@ interface CountryCardListProps {
   };
 }
 
-const CategoryItems = ({
+export const CategoryItems = ({
   items,
 }: {
   items: { emoji: string; item: string; price: number }[];
@@ -87,7 +88,7 @@ const CategoryItems = ({
               </>
             ) : (
               <>
-                Show {items.length - ITEMS_TO_SHOW} More{' '}
+                Show {items.length - ITEMS_TO_SHOW} More{" "}
                 <ChevronDown className="h-4 w-4" />
               </>
             )}
@@ -108,17 +109,20 @@ export default function CountryCardList({
 }: CountryCardListProps) {
   const router = useRouter();
   const [data, setData] = useState(initialData);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isSearchActive, setIsSearchActive] = useState(false);
   const countries = data.map(([country]) => country);
+
   const { images, isLoading } = useCountryImages(countries, imageMap);
+  const getCountryImage = (country: string): string =>
+    images[country] || "/images/placeholder.jpg";
+
   const [selectedCountry, setSelectedCountry] = useState<null | {
     country: string;
     items: { item: string; price: number }[];
   }>(null);
-
-  useEffect(() => {
-    setData(initialData);
-  }, [initialData]);
 
   const handlePageChange = async (page: number) => {
     if (page > 0 && page <= totalPages) {
@@ -128,27 +132,35 @@ export default function CountryCardList({
     }
   };
 
-  const handleSearchQuery = async (
-    query: string
-  ): Promise<[string, { item: string; price: number }[]][]> => {
-    if (query.trim() === '') {
-      setData(initialData); // Reset to initial data when query is cleared
-      setIsSearchActive(false); // Disable search mode
-      return initialData; // Return initial data
-    } else {
-      const filteredData = await searchCountry(query);
-      setData(filteredData); // Update data with filtered results
-      setIsSearchActive(true); // Enable search mode
-      return filteredData; // Return filtered data
-    }
+  const handleSearchTermChange = (val: string) => {
+    setSearchTerm(val);
   };
 
-  const getCountryImage = (country: string): string =>
-    images[country] || '/images/placeholder.jpg';
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!debouncedSearchTerm.trim()) {
+        setData(initialData);
+        setIsSearchActive(false);
+        return;
+      }
+      setIsSearchActive(true);
+      try {
+        const filtered = await searchCountry(debouncedSearchTerm);
+        setData(filtered);
+      } catch (err) {
+        console.error("Error:", err);
+      } finally {
+        setIsSearchActive(false);
+      }
+    };
+
+    fetchData();
+  }, [debouncedSearchTerm, initialData, searchCountry]);
 
   return (
     <>
-      <Hero searchCountry={handleSearchQuery} stats={stats} />
+      <Hero stats={stats} onSearchTermChange={handleSearchTermChange} />
+      {isSearchActive && <p className="text-center">Loading...</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.map(([country, items]) => {
           const priorityItems = getPriorityItems(items);
@@ -216,7 +228,6 @@ export default function CountryCardList({
         <DialogContent className="max-w-4xl w-full h-[90vh] overflow-hidden p-0">
           {selectedCountry && (
             <>
-              {/* Hero Image Section */}
               <div className="relative w-full h-48">
                 <Image
                   src={getCountryImage(selectedCountry.country)}
@@ -232,13 +243,12 @@ export default function CountryCardList({
                   </h2>
                 </div>
               </div>
-
               {/* Main Content */}
               <div className="flex flex-col h-[calc(90vh-12rem)]">
                 <DialogHeader className="px-6 py-4 border-b">
                   <DialogTitle>Cost of Living Details</DialogTitle>
                   <DialogDescription>
-                    Explore detailed costs in{' '}
+                    Explore detailed costs in{" "}
                     {formatCountryName(selectedCountry.country)}
                   </DialogDescription>
                 </DialogHeader>
@@ -248,16 +258,16 @@ export default function CountryCardList({
                     {Object.entries(groupItemsByCategory(selectedCountry.items))
                       .sort((a, b) => {
                         const order = [
-                          'Rent Per Month',
-                          'Utilities (Monthly)',
-                          'Markets',
-                          'Restaurants',
-                          'Transportation',
-                          'Sports And Leisure',
-                          'Clothing And Shoes',
-                          'Childcare',
-                          'Salaries And Financing',
-                          'Other',
+                          "Rent Per Month",
+                          "Utilities (Monthly)",
+                          "Markets",
+                          "Restaurants",
+                          "Transportation",
+                          "Sports And Leisure",
+                          "Clothing And Shoes",
+                          "Childcare",
+                          "Salaries And Financing",
+                          "Other",
                         ];
                         return order.indexOf(a[0]) - order.indexOf(b[0]);
                       })

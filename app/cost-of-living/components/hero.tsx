@@ -1,7 +1,8 @@
-'use client';
-import { BackgroundGradient } from '@/components/ui/background-gradient';
-import { Input } from '@/components/ui/input';
+"use client";
 
+import { BackgroundGradient } from "@/components/ui/background-gradient";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 interface GlobalStats {
   averageRentCityCenter: number;
   averageInternetSpeed: number;
@@ -10,14 +11,20 @@ interface GlobalStats {
 }
 
 export default function Hero({
-  searchCountry,
   stats,
+  onSearchTermChange,
 }: {
-  searchCountry: (
-    query: string
-  ) => Promise<[string, { item: string; price: number }[]][]>;
   stats: GlobalStats;
+  onSearchTermChange: (val: string) => void;
 }) {
+  const [query, setQuery] = useState("");
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+    onSearchTermChange(value);
+  };
+
   return (
     <div className="max-w-7xl mx-auto mt-10 px-4">
       {/* Hero Section */}
@@ -31,16 +38,15 @@ export default function Hero({
         </p>
         <div className="flex justify-center">
           <Input
-            type="text"
-            placeholder="Search for a country or city..."
-            className="w-96 p-3 border rounded-lg focus:ring-2 focus:ring-blue-500"
-            onChange={(e) => searchCountry(e.target.value)}
+            placeholder="Search for a country..."
+            value={query}
+            onChange={handleSearch}
           />
         </div>
       </section>
 
       {/* Global Metrics Section */}
-      <section className="grid grid-cols-3 gap-4 w-full mb-16">
+      <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-3 w-full mb-12">
         <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">

@@ -34,7 +34,19 @@ export function Navbar() {
               href="/cost-of-living"
               className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-gray-100 transition-colors"
             >
-              Cost of Living
+              Cost of Living{" "}
+              <span className="text-gray-500 dark:text-gray-400">
+                (by Country)
+              </span>
+            </Link>
+            <Link
+              href="/cost-of-living/cities"
+              className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-gray-100 transition-colors"
+            >
+              Cost of Living{" "}
+              <span className="text-gray-500 dark:text-gray-400">
+                (by City)
+              </span>
             </Link>
             <ModeToggle />
           </div>
