@@ -21,6 +21,7 @@ export default async function CostOfLivingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
+  "use cache";
   const page = parseInt((await searchParams).page || "1", 10);
 
   const [{ data, totalRows }, stats] = await Promise.all([

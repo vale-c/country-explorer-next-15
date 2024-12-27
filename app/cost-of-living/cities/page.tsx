@@ -8,6 +8,7 @@ export default async function CityPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
+  "use cache";
   const page = parseInt((await searchParams).page || "1", 10);
 
   const [{ data, totalRows }] = await Promise.all([
