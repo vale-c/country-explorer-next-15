@@ -106,12 +106,10 @@ export default function CityCardList({
       <section className="flex items-center justify-between mb-4">
         <Input
           placeholder="Search for a city"
+          className="w-full"
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <span className="text-sm text-gray-500 ml-4">
-          {isSearching ? "Searching..." : `${filteredData.length} cities found`}
-        </span>
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

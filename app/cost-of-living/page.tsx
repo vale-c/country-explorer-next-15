@@ -21,11 +21,10 @@ export default async function CostOfLivingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  "use cache";
   const page = parseInt((await searchParams).page || "1", 10);
 
   const [{ data, totalRows }, stats] = await Promise.all([
-    fetchPaginatedGroupedData(page, 9),
+    fetchPaginatedGroupedData(page, 15),
     getGlobalStatistics(),
   ]);
 
@@ -36,7 +35,7 @@ export default async function CostOfLivingPage({
     <Suspense
       fallback={
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.from({ length: 9 }).map((_, i) => (
+          {Array.from({ length: 15 }).map((_, i) => (
             <div
               key={i}
               className="h-[400px] bg-gray-200 animate-pulse rounded-lg"
@@ -48,8 +47,8 @@ export default async function CostOfLivingPage({
       <CountryCardList
         initialData={data}
         currentPage={page}
-        totalPages={Math.ceil(totalRows / 9)}
-        rowsPerPage={9}
+        totalPages={Math.ceil(totalRows / 15)}
+        rowsPerPage={15}
         imageMap={imageMap}
         searchCountry={searchCountry}
         stats={stats}
