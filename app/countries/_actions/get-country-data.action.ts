@@ -77,7 +77,12 @@ async function fetchLatestValue(
   const url = `${WORLD_BANK_API_URL}/country/${countryCode}/indicator/${indicator}?format=json&date=${YEAR_RANGE}&per_page=100`;
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: "force-cache",
+      next: {
+        revalidate: 3600,
+      },
+    });
     if (!response.ok) {
       console.error(`Error fetching ${indicator}: ${response.statusText}`);
       return null;

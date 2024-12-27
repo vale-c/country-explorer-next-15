@@ -19,13 +19,17 @@ export async function getCountryImage(countryName: string) {
         headers: {
           Authorization: process.env.NEXT_PUBLIC_PEXELS_API_KEY,
         },
+        cache: "force-cache",
+        next: {
+          revalidate: 3600,
+        },
       }
     );
 
     if (!response.ok) return fallbackImage;
 
     const data = await response.json();
-    return data.photos?.[0]?.src?.large || fallbackImage;
+    return data?.photos?.[0]?.src?.large || fallbackImage;
   } catch (error) {
     console.error(error);
     return "/images/placeholder.jpg";
