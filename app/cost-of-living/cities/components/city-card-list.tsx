@@ -42,7 +42,7 @@ export default function CityCardList({
   const [filteredData, setFilteredData] = useState<
     [string, { item: string; price: number }[]][]
   >([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [, setIsSearching] = useState(false);
   const [selectedCity, setSelectedCity] = useState<null | {
     city: string;
     items: { item: string; price: number }[];
