@@ -204,7 +204,6 @@ export async function fetchGlobalStatistics(): Promise<{
     .reduce((acc, row) => {
       if (!acc[row.country]) acc[row.country] = [];
       acc[row.country].push(row.price);
-      console.log('acc', acc);
       return acc;
     }, {} as Record<string, number[]>);
 
