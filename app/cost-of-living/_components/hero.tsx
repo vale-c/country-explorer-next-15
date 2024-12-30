@@ -7,7 +7,6 @@ export interface GlobalStats {
   averageRentCityCenter: number;
   averageInternetSpeed: number;
   averageCoffeePrice: number;
-  totalCountries: number;
 }
 
 export default function Hero({
