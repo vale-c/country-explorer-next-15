@@ -1,6 +1,5 @@
 'use server';
 
-import { unstable_cache } from 'next/cache';
 import { db } from '@/drizzle.config';
 import { costOfLiving, costOfLivingCities } from '@/lib/db/schema';
 import { ilike } from 'drizzle-orm';
@@ -10,70 +9,52 @@ const RESTCOUNTRIES_BASE_URL = 'https://restcountries.com/v3.1';
 const WORLD_BANK_API_URL = 'https://api.worldbank.org/v2';
 const YEAR_RANGE = '2012:2024';
 
-export async function getCountryByName(name: string) {
-  return unstable_cache(
-    async () => {
-      try {
-        const response = await fetch(
-          `https://restcountries.com/v3.1/name/${encodeURIComponent(
-            name
-          )}?fields=name,flags`
-        );
-        if (!response.ok) return null;
-        const data = await response.json();
-        return data[0] || null;
-      } catch (error) {
-        console.error(`Error fetching country data for ${name}:`, error);
-        return null;
-      }
-    },
-    [`country-data-${name}`],
-    {
-      revalidate: 86400,
-    }
-  )();
+async function getCountryByName(name: string) {
+  try {
+    const response = await fetch(
+      `${RESTCOUNTRIES_BASE_URL}/name/${encodeURIComponent(
+        name
+      )}?fields=name,flags`
+    );
+    if (!response.ok) return null;
+    const data = await response.json();
+    return data[0] || null;
+  } catch (error) {
+    console.error(`Error fetching country data for ${name}:`, error);
+    return null;
+  }
 }
 
 export async function getCountryImage(countryName: string) {
-  const cacheKey = `country-image-${countryName}`;
-  return unstable_cache(
-    async () => {
-      try {
-        const country = await getCountryByName(countryName);
-        const fallbackImage = country?.flags?.svg || '/images/placeholder.jpg';
+  try {
+    const country = await getCountryByName(countryName);
+    const fallbackImage = country?.flags?.svg || '/images/placeholder.jpg';
 
-        if (!process.env.NEXT_PUBLIC_PEXELS_API_KEY) {
-          return fallbackImage;
-        }
-
-        const response = await fetch(
-          `https://api.pexels.com/v1/search?query=${encodeURIComponent(
-            countryName
-          )} landscape architecture landmark&per_page=1`,
-          {
-            headers: {
-              Authorization: process.env.NEXT_PUBLIC_PEXELS_API_KEY,
-            },
-            cache: 'force-cache',
-            next: {
-              revalidate: 3600,
-            },
-          }
-        );
-        if (!response.ok) return fallbackImage;
-        const data = await response.json();
-        return data?.photos?.[0]?.src?.large || fallbackImage;
-      } catch (error) {
-        console.error(error);
-        return '/images/placeholder.jpg';
-      }
-    },
-    [cacheKey],
-    {
-      revalidate: 3600,
-      tags: [cacheKey],
+    if (!process.env.NEXT_PUBLIC_PEXELS_API_KEY) {
+      return fallbackImage;
     }
-  )();
+
+    const response = await fetch(
+      `https://api.pexels.com/v1/search?query=${encodeURIComponent(
+        countryName
+      )} landscape architecture landmark&per_page=1`,
+      {
+        headers: {
+          Authorization: process.env.NEXT_PUBLIC_PEXELS_API_KEY,
+        },
+        cache: 'force-cache',
+        next: {
+          revalidate: 86400, // 1 day
+        },
+      }
+    );
+    if (!response.ok) return fallbackImage;
+    const data = await response.json();
+    return data?.photos?.[0]?.src?.large || fallbackImage;
+  } catch (error) {
+    console.error(error);
+    return '/images/placeholder.jpg';
+  }
 }
 
 export async function searchCountry(query: string) {
@@ -100,23 +81,25 @@ export async function searchCountry(query: string) {
 }
 
 export async function searchCity(searchTerm: string) {
-  'use server';
-
   try {
-    // Search directly with Nominatim
+    // Split search term and get first part as city name
+    const cityName = searchTerm.split(',')[0].trim();
+
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
-        searchTerm
-      )}`
+      `https://nominatim.openstreetmap.org/search?` +
+        new URLSearchParams({
+          q: cityName,
+          format: 'json',
+          addressdetails: '1',
+          limit: '1',
+          featuretype: 'city',
+        })
     );
 
     if (!response.ok) return [];
 
     const locations = await response.json();
     if (locations.length === 0) return [];
-
-    // Get the first matching location
-    const location = locations[0];
 
     // Get cost of living data for this city
     const cityData = await db
@@ -129,7 +112,7 @@ export async function searchCity(searchTerm: string) {
       .where(
         ilike(
           costOfLivingCities.city,
-          `%${location.display_name.split(',')[0]}%`
+          `%${cityName}%` // Use the cleaned city name instead
         )
       );
 
@@ -151,8 +134,6 @@ export async function searchCity(searchTerm: string) {
 }
 
 export async function searchCityForMap(searchTerm: string) {
-  'use server';
-
   try {
     // Remove the country code from search term to focus on city name
     const cityName = searchTerm.split(',')[0].trim();
@@ -335,7 +316,7 @@ export async function fetchPaginatedGroupedCitiesData(
  * @param {number} rowsPerPage - The number of countries per page.
  * @returns {Promise<{ data: [string, { item: string; price: number }[]][]; totalRows: number }>}
  */
-export async function fetchPaginatedGroupedData(
+export async function fetchPaginatedGroupedCountryData(
   currentPage: number,
   rowsPerPage: number
 ): Promise<{
@@ -395,7 +376,6 @@ export async function getCountryByCode(code: string): Promise<Country | null> {
       cache: 'force-cache',
       next: {
         revalidate: 604800, // 1 week
-        tags: [`country-${code}`],
       },
     });
     if (!response.ok) throw new Error('Failed to fetch country');
@@ -445,7 +425,6 @@ export async function getCountries() {
         cache: 'force-cache',
         next: {
           revalidate: 604800,
-          tags: ['countries'],
         },
       }
     );

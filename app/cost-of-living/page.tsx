@@ -2,7 +2,10 @@ import { Suspense } from 'react';
 import CountryCardList from './_components/country-card-list';
 import { getCountryImage } from '@/lib/data';
 import { searchCountry } from '@/lib/data';
-import { fetchGlobalStatistics, fetchPaginatedGroupedData } from '@/lib/data';
+import {
+  fetchGlobalStatistics,
+  fetchPaginatedGroupedCountryData,
+} from '@/lib/data';
 
 async function getCountryImages(countries: string[]) {
   const imageMap: Record<string, string> = {};
@@ -24,7 +27,7 @@ export default async function CostOfLivingPage({
 
   // Server component data fetching
   const [{ data, totalRows }, stats] = await Promise.all([
-    fetchPaginatedGroupedData(page, 15),
+    fetchPaginatedGroupedCountryData(page, 15),
     fetchGlobalStatistics(),
   ]);
 
