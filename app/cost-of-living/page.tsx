@@ -1,11 +1,10 @@
-import { Suspense } from "react";
-import { fetchPaginatedGroupedData } from "@/lib/db/fetch-paginated-data";
-import CountryCardList from "./components/country-card-list";
-import { getCountryImage } from "@/app/countries/_actions/get-country-image.action";
-import { searchCountry } from "./_actions/search-country.action";
-import { getGlobalStatistics } from "./_actions/get-global-statistics.action";
+import { Suspense } from 'react';
+import CountryCardList from './_components/country-card-list';
+import { getCountryImage } from '@/lib/data';
+import { searchCountry } from '@/lib/data';
+import { fetchGlobalStatistics, fetchPaginatedGroupedData } from '@/lib/data';
 
-export async function getCountryImages(countries: string[]) {
+async function getCountryImages(countries: string[]) {
   const imageMap: Record<string, string> = {};
   await Promise.all(
     countries.map(async (country) => {
@@ -21,11 +20,12 @@ export default async function CostOfLivingPage({
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const page = parseInt((await searchParams).page || "1", 10);
+  const page = parseInt((await searchParams).page || '1', 10);
 
+  // Server component data fetching
   const [{ data, totalRows }, stats] = await Promise.all([
     fetchPaginatedGroupedData(page, 15),
-    getGlobalStatistics(),
+    fetchGlobalStatistics(),
   ]);
 
   const countries = data.map(([country]) => country);

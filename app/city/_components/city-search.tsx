@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { searchCity } from '@/app/city/_actions/search-city.action';
+import { searchCityForMap } from '@/lib/data';
 
 interface CitySearchProps {
   countryCode: string;
@@ -16,9 +16,12 @@ export function CitySearch({ countryCode }: CitySearchProps) {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    const foundCities = await searchCity(`${query}, ${countryCode}`);
-    if (foundCities.length > 0) {
-      router.push(`/city/${foundCities[0].lat}/${foundCities[0].lon}`);
+
+    const cities = await searchCityForMap(`${query}, ${countryCode}`);
+    const firstCity = cities[0];
+
+    if (firstCity?.lat && firstCity?.lon) {
+      router.push(`/city/${firstCity.lat}/${firstCity.lon}`);
     }
   };
 

@@ -1,8 +1,8 @@
-import { CountryList } from "./components/country-list";
-import { Country } from "@/types/country";
-import { getCountries } from "./_actions/get-country-data.action";
+import { CountryList } from './_components/country-list';
+import { Country } from '@/types/country';
+import { getCountries } from '@/lib/data';
 
-import { CountrySearch } from "./components/country-search";
+import { CountrySearch } from './_components/country-search';
 
 export default async function CountriesPage() {
   const countries: Country[] = await getCountries();

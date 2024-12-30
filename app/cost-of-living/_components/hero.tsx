@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { BackgroundGradient } from "@/components/ui/background-gradient";
-import { Input } from "@/components/ui/input";
-import { useState } from "react";
-interface GlobalStats {
+import { BackgroundGradient } from '@/components/ui/background-gradient';
+import { Input } from '@/components/ui/input';
+import { useState } from 'react';
+export interface GlobalStats {
   averageRentCityCenter: number;
   averageInternetSpeed: number;
   averageCoffeePrice: number;
@@ -17,7 +17,7 @@ export default function Hero({
   stats: GlobalStats;
   onSearchTermChange: (val: string) => void;
 }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;

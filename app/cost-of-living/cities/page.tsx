@@ -1,21 +1,31 @@
-import { Suspense } from "react";
-import { fetchPaginatedGroupedCitiesData } from "@/lib/db/fetch-all-cities-data";
-import CityCardList from "./components/city-card-list";
-import { getCountryImages } from "../page";
+import { Suspense } from 'react';
+import { fetchPaginatedGroupedCitiesData, getCountryImage } from '@/lib/data';
+import CityCardList from './_components/city-card-list';
+
+async function getCityImage(cities: string[]) {
+  const imageMap: Record<string, string> = {};
+  await Promise.all(
+    cities.map(async (city) => {
+      const image = await getCountryImage(city);
+      imageMap[city] = image;
+    })
+  );
+  return imageMap;
+}
 
 export default async function CityPage({
   searchParams,
 }: {
   searchParams: Promise<{ page?: string }>;
 }) {
-  const page = parseInt((await searchParams).page || "1", 10);
+  const page = parseInt((await searchParams).page || '1', 10);
 
   const [{ data, totalRows }] = await Promise.all([
     fetchPaginatedGroupedCitiesData(page, 15),
   ]);
 
   const cities = data.map(([city]) => city);
-  const imageMap = await getCountryImages(cities);
+  const imageMap = await getCityImage(cities);
 
   return (
     <Suspense

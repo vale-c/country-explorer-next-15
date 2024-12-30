@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
-import { getCityDetails } from '@/app/city/_actions/get-city-details.action';
-import { CityDetails } from '@/app/city/city-details';
+import { getCityDetails } from '@/lib/data';
+import { CityDetails } from '@/app/city/_components/city-details';
 import { MapWrapper } from '@/components/map-wrapper';
 
 interface CityPageProps {

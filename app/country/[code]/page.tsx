@@ -1,8 +1,6 @@
-import { notFound } from "next/navigation";
-import { getCountryByCode } from "@/app/countries/_actions/get-country-by-code.action";
-import { getCountryData } from "@/app/countries/_actions/get-country-data.action";
-import { getCountryImage } from "@/app/countries/_actions/get-country-image.action";
-import { CountryDetails } from "@/app/countries/components/country-details";
+import { notFound } from 'next/navigation';
+import { getCountryByCode, getCountryData, getCountryImage } from '@/lib/data';
+import { CountryDetails } from '@/app/countries/_components/country-details';
 
 interface CountryPageProps {
   params: Promise<{ code: string }>;

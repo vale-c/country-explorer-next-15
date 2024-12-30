@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { getCountryImage } from '@/app/countries/_actions/get-country-image.action';
+import { getCountryImage } from '@/lib/data';
 
 export function useCountryImages(
   countries: string[],

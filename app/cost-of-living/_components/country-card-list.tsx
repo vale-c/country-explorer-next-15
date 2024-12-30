@@ -1,29 +1,30 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import Hero from "./hero";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import Hero from './hero';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   groupItemsByCategory,
   getPriorityItems,
   formatCountryName,
-} from "../utils";
-import { CountryImage } from "./country-image";
-import { useCountryImages } from "../hooks/use-country-images";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { useDebounce } from "@/lib/utils/hooks/useDebounce";
+} from '../utils';
+import { CountryImage } from './country-image';
+import { useCountryImages } from '../hooks/use-country-images';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useDebounce } from '@/lib/utils/hooks/useDebounce';
+import { GlobalStats } from './hero';
 
 interface CountryCardListProps {
   initialData: [string, { item: string; price: number }[]][];
@@ -40,12 +41,7 @@ interface CountryCardListProps {
       }[]
     ][]
   >;
-  stats: {
-    averageRentCityCenter: number;
-    averageInternetSpeed: number;
-    averageCoffeePrice: number;
-    totalCountries: number;
-  };
+  stats: GlobalStats;
 }
 
 export const CategoryItems = ({
@@ -88,7 +84,7 @@ export const CategoryItems = ({
               </>
             ) : (
               <>
-                Show {items.length - ITEMS_TO_SHOW} More{" "}
+                Show {items.length - ITEMS_TO_SHOW} More{' '}
                 <ChevronDown className="h-4 w-4" />
               </>
             )}
@@ -109,7 +105,7 @@ export default function CountryCardList({
 }: CountryCardListProps) {
   const router = useRouter();
   const [data, setData] = useState(initialData);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [isSearchActive, setIsSearchActive] = useState(false);
@@ -117,7 +113,7 @@ export default function CountryCardList({
 
   const { images, isLoading } = useCountryImages(countries, imageMap);
   const getCountryImage = (country: string): string =>
-    images[country] || "/images/placeholder.jpg";
+    images[country] || '/images/placeholder.jpg';
 
   const [selectedCountry, setSelectedCountry] = useState<null | {
     country: string;
@@ -148,7 +144,7 @@ export default function CountryCardList({
         const filtered = await searchCountry(debouncedSearchTerm);
         setData(filtered);
       } catch (err) {
-        console.error("Error:", err);
+        console.error('Error:', err);
       } finally {
         setIsSearchActive(false);
       }
@@ -248,7 +244,7 @@ export default function CountryCardList({
                 <DialogHeader className="px-6 py-4 border-b">
                   <DialogTitle>Cost of Living Details</DialogTitle>
                   <DialogDescription>
-                    Explore detailed costs in{" "}
+                    Explore detailed costs in{' '}
                     {formatCountryName(selectedCountry.country)}
                   </DialogDescription>
                 </DialogHeader>
@@ -258,16 +254,16 @@ export default function CountryCardList({
                     {Object.entries(groupItemsByCategory(selectedCountry.items))
                       .sort((a, b) => {
                         const order = [
-                          "Rent Per Month",
-                          "Utilities (Monthly)",
-                          "Markets",
-                          "Restaurants",
-                          "Transportation",
-                          "Sports And Leisure",
-                          "Clothing And Shoes",
-                          "Childcare",
-                          "Salaries And Financing",
-                          "Other",
+                          'Rent Per Month',
+                          'Utilities (Monthly)',
+                          'Markets',
+                          'Restaurants',
+                          'Transportation',
+                          'Sports And Leisure',
+                          'Clothing And Shoes',
+                          'Childcare',
+                          'Salaries And Financing',
+                          'Other',
                         ];
                         return order.indexOf(a[0]) - order.indexOf(b[0]);
                       })

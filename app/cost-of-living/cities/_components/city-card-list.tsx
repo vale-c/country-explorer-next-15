@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useCountryImages } from "../../hooks/use-country-images";
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useCountryImages } from '../../hooks/use-country-images';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { CategoryItems } from "../../components/country-card-list";
-import { CountryImage } from "../../components/country-image";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { getPriorityItems, groupItemsByCategory } from "../../utils";
-import { Input } from "@/components/ui/input";
-import { searchCity } from "../_actions/search-city.action";
-import { useDebounce } from "@/lib/utils/hooks/useDebounce";
+} from '@/components/ui/dialog';
+import { CategoryItems } from '../../_components/country-card-list';
+import { CountryImage } from '../../_components/country-image';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { getPriorityItems, groupItemsByCategory } from '../../utils';
+import { Input } from '@/components/ui/input';
+import { searchCity } from '@/lib/data';
+import { useDebounce } from '@/lib/utils/hooks/useDebounce';
 
 interface CityCardListProps {
   imageMap: Record<string, string>;
@@ -37,7 +37,7 @@ export default function CityCardList({
   const router = useRouter();
   const itemsPerPage = 9; // Define the number of items per page
   const [data, setData] = useState(initialData);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [filteredData, setFilteredData] = useState<
     [string, { item: string; price: number }[]][]
@@ -72,7 +72,7 @@ export default function CityCardList({
         const result = await searchCity(debouncedSearchTerm);
         setFilteredData(result); // Update filtered data based on search
       } catch (error) {
-        console.error("Error fetching search results:", error);
+        console.error('Error fetching search results:', error);
       } finally {
         setIsSearching(false);
       }
@@ -94,7 +94,7 @@ export default function CityCardList({
   };
 
   const getCountryImage = (city: string): string =>
-    images[city] || "/images/placeholder.jpg";
+    images[city] || '/images/placeholder.jpg';
 
   // Calculate total pages dynamically for search results
   const dynamicTotalPages = searchTerm
@@ -200,16 +200,16 @@ export default function CityCardList({
                     {Object.entries(groupItemsByCategory(selectedCity.items))
                       .sort((a, b) => {
                         const order = [
-                          "Rent Per Month",
-                          "Utilities (Monthly)",
-                          "Markets",
-                          "Restaurants",
-                          "Transportation",
-                          "Sports And Leisure",
-                          "Clothing And Shoes",
-                          "Childcare",
-                          "Salaries And Financing",
-                          "Other",
+                          'Rent Per Month',
+                          'Utilities (Monthly)',
+                          'Markets',
+                          'Restaurants',
+                          'Transportation',
+                          'Sports And Leisure',
+                          'Clothing And Shoes',
+                          'Childcare',
+                          'Salaries And Financing',
+                          'Other',
                         ];
                         return order.indexOf(a[0]) - order.indexOf(b[0]);
                       })
