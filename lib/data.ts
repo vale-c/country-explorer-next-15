@@ -190,7 +190,6 @@ export async function fetchGlobalStatistics(): Promise<{
   averageRentCityCenter: number;
   averageInternetSpeed: number;
   averageCoffeePrice: number;
-  totalCountries: number;
 }> {
   const rawData = await db.select().from(costOfLiving);
 
@@ -199,36 +198,35 @@ export async function fetchGlobalStatistics(): Promise<{
     price: Number(row.price),
   }));
 
-  const rentItems = [
-    'Apartment (1 bedroom) in City Centre',
-    'Apartment (1 bedroom) Outside of Centre',
-    'Apartment (3 bedrooms) in City Centre',
-    'Apartment (3 bedrooms) Outside of Centre',
-  ];
+  // Group by country to ensure equal country weight
+  const rentByCountry = parsedData
+    .filter((row) => row.item === 'Apartment (1 bedroom) in City Centre')
+    .reduce((acc, row) => {
+      if (!acc[row.country]) acc[row.country] = [];
+      acc[row.country].push(row.price);
+      console.log('acc', acc);
+      return acc;
+    }, {} as Record<string, number[]>);
 
-  const internetItems = [
-    'Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)',
-  ];
+  // Get median rent for each country
+  const countryMedians = Object.entries(rentByCountry).map(([, prices]) => {
+    const sorted = [...prices].sort((a, b) => a - b);
+    return sorted[Math.floor(sorted.length / 2)];
+  });
 
-  // Filter rent prices and exclude outliers
-  const rentPrices = parsedData
-    .filter((row) => rentItems.includes(row.item))
-    .map((row) => {
-      // console.log(row); // Log each row
-      return row.price;
-    })
-    .filter((price) => price > 0 && price <= 10000); // Exclude rents > $10,000
-
+  // Global average from country medians
   const avgRent =
-    rentPrices.length > 0
-      ? rentPrices.reduce((sum, price) => sum + price, 0) / rentPrices.length
+    countryMedians.length > 0
+      ? countryMedians.reduce((sum, price) => sum + price, 0) /
+        countryMedians.length
       : 0;
 
-  // Filter internet speeds and exclude outliers
   const internetSpeeds = parsedData
-    .filter((row) => internetItems.includes(row.item))
-    .map((row) => row.price)
-    .filter((speed) => speed > 0 && speed <= 200); // Exclude speeds > 200 Mbps
+    .filter(
+      (row) =>
+        row.item === 'Internet (60 Mbps or More, Unlimited Data, Cable/ADSL)'
+    )
+    .map((row) => row.price);
 
   const avgInternetSpeed =
     internetSpeeds.length > 0
@@ -236,29 +234,20 @@ export async function fetchGlobalStatistics(): Promise<{
         internetSpeeds.length
       : 0;
 
-  const mealPrices = parsedData
-    .filter((row) => row.item === 'Meal, Inexpensive Restaurant')
+  const coffeePrices = parsedData
+    .filter((row) => row.item === 'Cappuccino (regular)')
     .map((row) => row.price)
-    .filter((price) => price > 0 && price <= 100); // Exclude prices > $100
+    .sort((a, b) => a - b);
 
-  const avgMealPrice =
-    mealPrices.length > 0
-      ? mealPrices.reduce((sum, price) => sum + price, 0) / mealPrices.length
+  const medianCoffeePrice =
+    coffeePrices.length > 0
+      ? coffeePrices[Math.floor(coffeePrices.length / 2)]
       : 0;
-
-  // Group data by country
-  const groupedData = parsedData.reduce((acc, row) => {
-    const { country, item, price } = row;
-    if (!acc[country]) acc[country] = [];
-    acc[country].push({ item, price });
-    return acc;
-  }, {} as Record<string, { item: string; price: number }[]>);
 
   return {
     averageRentCityCenter: parseFloat(avgRent.toFixed(2)),
     averageInternetSpeed: parseFloat(avgInternetSpeed.toFixed(2)),
-    averageCoffeePrice: parseFloat(avgMealPrice.toFixed(2)),
-    totalCountries: Object.keys(groupedData).length || 0,
+    averageCoffeePrice: parseFloat(medianCoffeePrice.toFixed(2)),
   };
 }
 

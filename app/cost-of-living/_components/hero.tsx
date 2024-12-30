@@ -50,13 +50,13 @@ export default function Hero({
         <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              🏢 Average City Rent
+              🏢 Average City Rent <span className="text-sm">(Monthly)</span>
             </h2>
             <p className="text-2xl font-bold text-blue-500">
               ${stats.averageRentCityCenter}
             </p>
             <p className="text-sm text-gray-500">
-              Global monthly average for 1BR apartment
+              Global average price for 1BR apartment
             </p>
           </div>
         </BackgroundGradient>
@@ -64,13 +64,13 @@ export default function Hero({
         <BackgroundGradient className="rounded-[22px] w-full p-4 sm:p-10 bg-white dark:bg-zinc-900">
           <div className="space-y-2 text-center">
             <h2 className="text-xl font-semibold text-gray-700 dark:text-gray-300">
-              🌐 High-Speed Internet
+              🌐 High-Speed Internet <span className="text-sm">(Monthly)</span>
             </h2>
             <p className="text-2xl font-bold text-green-500">
               ${stats.averageInternetSpeed}
             </p>
             <p className="text-sm text-gray-500">
-              60+ Mbps unlimited data, monthly
+              Global average price for 60+ Mbps internet
             </p>
           </div>
         </BackgroundGradient>
@@ -84,7 +84,7 @@ export default function Hero({
               ${stats.averageCoffeePrice}
             </p>
             <p className="text-sm text-gray-500">
-              Average price for cappuccino worldwide
+              Global average price for cappuccino
             </p>
           </div>
         </BackgroundGradient>
